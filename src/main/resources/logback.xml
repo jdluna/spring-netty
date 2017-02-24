@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE project>
+<configuration>
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{25} - %msg%n</Pattern>
+		</layout>
+	</appender>
+
+	<logger name="com.example.netty" level="debug" />
+
+	<logger name="org.springframework.core" level="info" />
+
+	<logger name="org.springframework.beans" level="info" />
+
+	<logger name="org.springframework.context" level="info" />
+
+	<root level="debug">
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>
