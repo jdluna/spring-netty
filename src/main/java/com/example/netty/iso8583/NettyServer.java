@@ -1,22 +1,17 @@
 package com.example.netty.iso8583;
 
+import java.util.List;
+
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public class NettyServer {
 	
-	final Logger logger = LoggerFactory.getLogger(NettyServer.class);
-
+	private String ip;
 	private int port;
 
 	private EventLoopGroup bossGroup;
@@ -26,7 +21,7 @@ public class NettyServer {
 
 	private List<ChannelHandler> channelHandlers;
 	
-	public void start() {
+	public void start() throws InterruptedException {
 		bootstrap
 			.group(bossGroup, workerGroup)
 			.childHandler(new ChannelInitializer<SocketChannel>() {
@@ -41,25 +36,20 @@ public class NettyServer {
                  }
              });
 		
-		try {
-			ChannelFuture f = bootstrap.bind(port).sync();
-			f.channel().closeFuture().sync();
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			
-		} finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        }
+		bootstrap.bind(ip, port);
 	}
 	
 	public void stop() {
-		
+		bossGroup.shutdownGracefully();
+		workerGroup.shutdownGracefully();
+	}
+	
+	public String getIp() {
+		return ip;
 	}
 
-	public NettyServer(int port) {
-		this.port = port;
+	public void setIp(String ip) {
+		this.ip = ip;
 	}
 
 	public int getPort() {

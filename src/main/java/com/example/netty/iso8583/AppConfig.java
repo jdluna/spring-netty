@@ -1,5 +1,6 @@
 package com.example.netty.iso8583;
 
+import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
@@ -9,6 +10,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -40,13 +42,14 @@ public class AppConfig {
 		return messageFactory;
 	}
 	
+	/* Server */
 	@Bean
-	public EventLoopGroup bossEventLoopGroup() {
+	public EventLoopGroup serverBossEventLoopGroup() {
 		return new NioEventLoopGroup();
 	}
 	
 	@Bean
-	public EventLoopGroup workerEventLoopGroup() {
+	public EventLoopGroup serverWorkerEventLoopGroup() {
 		return new NioEventLoopGroup();
 	}
 	
@@ -64,11 +67,41 @@ public class AppConfig {
 	
 	@Bean
 	public NettyServer nettyServer(List<ChannelHandler> channelHandlers) {
-		NettyServer server = new NettyServer(5000);
-		server.setBossGroup(bossEventLoopGroup());
-		server.setWorkerGroup(workerEventLoopGroup());
+		NettyServer server = new NettyServer();
+		server.setIp("localhost");
+		server.setPort(5000);
+		server.setBossGroup(serverBossEventLoopGroup());
+		server.setWorkerGroup(serverWorkerEventLoopGroup());
 		server.setBootstrap(serverBootstrap());
 		server.setChannelHandlers(channelHandlers);
 		return server;
+	}
+	
+	/* Client */
+	
+	@Bean
+	public EventLoopGroup clientWorkerEventLoopGroup() {
+		return new NioEventLoopGroup();
+	}
+	
+	@Bean
+	public Bootstrap clientBootstrap() {
+		Bootstrap bootstrap = new Bootstrap();
+		bootstrap.channel(NioServerSocketChannel.class);
+		return bootstrap;
+	}
+	
+	@Bean
+	public NettyClient nettyClient() {
+		List<ChannelHandler> channelHandlers = new ArrayList<>();
+		channelHandlers.add(new LoggingHandler(LogLevel.INFO));
+		
+		NettyClient client = new NettyClient();
+		client.setIp("localhost");
+		client.setPort(5000);
+		client.setWorkerGroup(clientWorkerEventLoopGroup());
+		client.setBootstrap(clientBootstrap());
+		client.setChannelHandlers(channelHandlers);
+		return client;
 	}
 }
