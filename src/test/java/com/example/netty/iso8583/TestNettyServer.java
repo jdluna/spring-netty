@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 import com.example.netty.AbstractTestCase;
-import com.example.netty.NettyClient;
+import com.example.netty.util.NettyClient;
 
 public class TestNettyServer extends AbstractTestCase {
 	

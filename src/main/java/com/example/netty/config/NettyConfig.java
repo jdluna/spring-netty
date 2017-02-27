@@ -1,4 +1,4 @@
-package com.example.netty;
+package com.example.netty.config;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
@@ -10,40 +10,18 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Scope;
 
-import com.example.netty.iso8583.MessageFactory;
-import com.solab.iso8583.parse.ConfigParser;
+import com.example.netty.util.NettyClient;
+import com.example.netty.util.NettyServer;
 
 @Configuration
-@ComponentScan(
-	basePackages = "com.example.netty", 
-	excludeFilters = {
-		@Filter(type = FilterType.REGEX, pattern = "com.example.netty.iso20022..*")
-	}
-)
-public class AppConfig {
-	
-	@Bean
-	public MessageFactory messageFactory() throws IOException {
-		MessageFactory messageFactory = new MessageFactory();
-		messageFactory.setAssignDate(true);
-		messageFactory.setUseBinaryBitmap(true);
-		messageFactory.setUseBinaryMessages(true);
-		
-		ConfigParser.configureFromClasspathConfig(messageFactory, "j8583.xml");
-		
-		return messageFactory;
-	}
-	
+public class NettyConfig {
+
 	@Bean
 	public EventLoopGroup serverEventLoop() {
 		return new NioEventLoopGroup();

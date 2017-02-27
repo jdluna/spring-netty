@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.example.netty.config.AppConfig;
+
 public class AppBootstrap {
 	
 	final static Logger logger = LoggerFactory.getLogger(AppBootstrap.class);
