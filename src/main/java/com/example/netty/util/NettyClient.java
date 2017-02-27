@@ -1,12 +1,12 @@
 package com.example.netty.util;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.util.concurrent.Future;
 
 import java.util.List;
 
@@ -16,10 +16,12 @@ public class NettyClient {
 	private int port;
 
 	private Bootstrap bootstrap;
+	
+	private Channel channel;
 
 	private List<ChannelHandler> channelHandlers;
 
-	public synchronized ChannelFuture start() {
+	public synchronized void start() {
 		bootstrap
 			.handler(new ChannelInitializer<SocketChannel>() {
 			
@@ -33,15 +35,19 @@ public class NettyClient {
 				}
 		});
 	
-		return bootstrap.connect(host, port).syncUninterruptibly();
+		channel = bootstrap.connect(host, port).syncUninterruptibly().channel();
 	}
 	
-	public synchronized Future<?> stop() {
-		return bootstrap.group().shutdownGracefully().syncUninterruptibly();
+	public synchronized void stop() {
+		bootstrap.group().shutdownGracefully().syncUninterruptibly();
 	}
 	
-	public void send(byte[] bytes) {
-		
+	public ChannelFuture write(Object object) {
+		return channel.write(object);
+	}
+	
+	public void flush() {
+		channel.flush();
 	}
 
 	public String getHost() {
@@ -74,5 +80,9 @@ public class NettyClient {
 
 	public void setChannelHandlers(List<ChannelHandler> channelHandlers) {
 		this.channelHandlers = channelHandlers;
+	}
+
+	public Channel getChannel() {
+		return channel;
 	}
 }

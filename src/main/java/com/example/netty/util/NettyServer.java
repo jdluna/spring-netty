@@ -1,12 +1,12 @@
 package com.example.netty.util;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.util.concurrent.Future;
 
 import java.util.List;
 
@@ -17,11 +17,13 @@ public class NettyServer {
 	private int port;
 
 	private ServerBootstrap bootstrap;
+	
+	private Channel channel;
 
 	private List<ChannelHandler> channelHandlers;
 	
-	public synchronized ChannelFuture start() throws InterruptedException {
-		return bootstrap
+	public synchronized void start() throws InterruptedException {
+		bootstrap
 			.childHandler(new ChannelInitializer<SocketChannel>() {
 				
                  @Override
@@ -32,12 +34,21 @@ public class NettyServer {
                     	 channelPipeline.addLast(channelHanlder);
                      }
                  }
-             })
-             .bind(host, port).sync();
+             });
+		
+        channel = bootstrap.bind(host, port).sync().channel();
 	}
 	
-	public synchronized Future<?> stop() {
-		return bootstrap.group().shutdownGracefully().syncUninterruptibly();
+	public synchronized void stop() {
+		bootstrap.group().shutdownGracefully().syncUninterruptibly();
+	}
+	
+	public ChannelFuture write(Object object) {
+		return channel.write(object);
+	}
+	
+	public void flush() {
+		channel.flush();
 	}
 	
 	public String getHost() {
@@ -70,5 +81,9 @@ public class NettyServer {
 
 	public void setBootstrap(ServerBootstrap bootstrap) {
 		this.bootstrap = bootstrap;
+	}
+
+	public Channel getChannel() {
+		return channel;
 	}
 }
