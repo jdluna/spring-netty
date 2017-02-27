@@ -14,6 +14,9 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
 	
 	@Override
 	protected void channelRead0(ChannelHandlerContext paramChannelHandlerContext, String paramI) throws Exception {
-		logger.debug(paramI);		
+		logger.debug(paramI);
+		
+		paramChannelHandlerContext.writeAndFlush(paramI);
+		
 	}
 }

@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.example.netty.iso8583.handler.ClientHandler;
 import com.example.netty.iso8583.handler.ServerHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
@@ -58,6 +59,7 @@ public class NettyConfig {
 		channelHandlers.add(loggingHandler());
 		channelHandlers.add(new StringDecoder(CharsetUtil.UTF_8));
 		channelHandlers.add(new ServerHandler());
+		channelHandlers.add(new StringEncoder(CharsetUtil.UTF_8));
 		return channelHandlers;
 	}
 	
@@ -84,6 +86,8 @@ public class NettyConfig {
 	public List<ChannelHandler> clientHandlers() {
 		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
 		channelHandlers.add(loggingHandler());
+		channelHandlers.add(new StringDecoder(CharsetUtil.UTF_8));
+		channelHandlers.add(new ClientHandler());
 		channelHandlers.add(new StringEncoder(CharsetUtil.UTF_8));
 		return channelHandlers;
 	}

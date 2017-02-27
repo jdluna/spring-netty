@@ -2,13 +2,18 @@ package com.example.netty.iso8583.handler;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Sharable
-public class ClientHandler extends ChannelInboundHandlerAdapter {
+public class ClientHandler extends SimpleChannelInboundHandler<String> {
+
+	private static Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 	
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		super.channelRead(ctx, msg);
+	protected void channelRead0(ChannelHandlerContext paramChannelHandlerContext, String paramI) throws Exception {
+		logger.debug("SUCCESS");
 	}
 }
