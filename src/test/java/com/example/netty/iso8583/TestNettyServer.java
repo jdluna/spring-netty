@@ -1,11 +1,24 @@
 package com.example.netty.iso8583;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
-public class TestNettyServer {
+import com.example.netty.AbstractTestCase;
+import com.example.netty.NettyClient;
+
+public class TestNettyServer extends AbstractTestCase {
+	
+	@Autowired
+	ApplicationContext appContext;
 
 	@Test
 	public void doTest() {
+		NettyClient nettyClient = appContext.getBean(NettyClient.class);
 		
+		nettyClient.start();
+		
+		
+		nettyClient.stop();
 	}
 }
