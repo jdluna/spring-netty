@@ -6,20 +6,21 @@ import org.springframework.context.ApplicationContext;
 
 import com.example.netty.AbstractTestCase;
 import com.example.netty.util.NettyClient;
+import com.example.netty.util.NettyServer;
 
 public class TestNettyServer extends AbstractTestCase {
 	
 	@Autowired
-	ApplicationContext appContext;
+	private ApplicationContext appContext;
 
 	@Test
 	public void doTest() throws InterruptedException {
-		NettyClient nettyClient = appContext.getBean(NettyClient.class);
+		NettyServer nettyServer = appContext.getBean(NettyServer.class);
+		nettyServer.start();
 		
+		NettyClient nettyClient = appContext.getBean(NettyClient.class);
 		nettyClient.start();
 
-		//nettyClient.writeAndFlush("Hello");
-		
-		//nettyClient.stop();
+		nettyClient.writeAndFlush("Hello");
 	}
 }

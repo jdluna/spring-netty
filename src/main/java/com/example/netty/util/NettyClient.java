@@ -13,6 +13,7 @@ import java.util.List;
 public class NettyClient {
 
 	private String host;
+	
 	private int port;
 
 	private Bootstrap bootstrap;

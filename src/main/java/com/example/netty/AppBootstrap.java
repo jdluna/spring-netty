@@ -6,15 +6,19 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.example.netty.config.AppConfig;
+import com.example.netty.util.NettyServer;
 
 public class AppBootstrap {
 	
 	final static Logger logger = LoggerFactory.getLogger(AppBootstrap.class);
 
-	@SuppressWarnings({ "unused", "resource" })
+	@SuppressWarnings({ "resource" })
 	public static void main(String[] args) throws InterruptedException {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		
-		logger.debug("App context started...");
+		NettyServer nettyServer = appContext.getBean(NettyServer.class);
+		nettyServer.start();
+		
+		logger.debug("Netty server started at {}:{}", nettyServer.getHost(), nettyServer.getPort());
 	}
 }

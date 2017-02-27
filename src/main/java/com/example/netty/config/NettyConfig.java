@@ -16,6 +16,7 @@ import io.netty.util.CharsetUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -26,6 +27,12 @@ import com.example.netty.util.NettyServer;
 
 @Configuration
 public class NettyConfig {
+	
+	@Value("${server.host}")
+	private String host;
+	
+	@Value("${server.port}")
+	private int port;
 
 	@Bean
 	public LoggingHandler loggingHandler() {
@@ -51,15 +58,14 @@ public class NettyConfig {
 		channelHandlers.add(loggingHandler());
 		channelHandlers.add(new StringDecoder(CharsetUtil.UTF_8));
 		channelHandlers.add(new ServerHandler());
-		channelHandlers.add(new StringEncoder(CharsetUtil.UTF_8));
 		return channelHandlers;
 	}
 	
-	@Bean(initMethod = "start", destroyMethod = "stop")
+	@Bean(destroyMethod = "stop")
 	public NettyServer nettyServer() {
 		NettyServer server = new NettyServer();
-		server.setHost("localhost");
-		server.setPort(5000);
+		server.setHost(host);
+		server.setPort(port);
 		server.setBootstrap(serverBootstrap());
 		server.setChannelHandlers(serverHandlers());
 		return server;
@@ -84,7 +90,6 @@ public class NettyConfig {
 	public List<ChannelHandler> clientHandlers() {
 		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
 		channelHandlers.add(loggingHandler());
-		channelHandlers.add(new StringDecoder(CharsetUtil.UTF_8));
 		channelHandlers.add(new StringEncoder(CharsetUtil.UTF_8));
 		return channelHandlers;
 	}
@@ -93,8 +98,8 @@ public class NettyConfig {
 	@Scope(scopeName = "prototype")
 	public NettyClient nettyClient(List<ChannelHandler> channelHandlers) {
 		NettyClient nettyClient = new NettyClient();
-		nettyClient.setHost("localhost");
-		nettyClient.setPort(5000);
+		nettyClient.setHost(host);
+		nettyClient.setPort(port);
 		nettyClient.setBootstrap(clientBootstrap());
 		nettyClient.setChannelHandlers(clientHandlers());
 		return nettyClient;
