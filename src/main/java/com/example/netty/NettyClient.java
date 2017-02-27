@@ -1,20 +1,17 @@
-package com.example.netty.iso8583;
-
-import java.util.List;
+package com.example.netty;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+
+import java.util.List;
 
 public class NettyClient {
 
-	private String ip;
+	private String host;
 	private int port;
-
-	private EventLoopGroup workerGroup;
 
 	private Bootstrap bootstrap;
 
@@ -22,7 +19,6 @@ public class NettyClient {
 
 	public void start() {
 		bootstrap
-			.group(workerGroup)
 			.handler(new ChannelInitializer<SocketChannel>() {
 			
 				@Override
@@ -35,19 +31,19 @@ public class NettyClient {
 				}
 		});
 	
-		bootstrap.connect(ip, port);
+		bootstrap.connect(host, port);
 	}
-
+	
 	public void stop() {
-		workerGroup.shutdownGracefully();
+		bootstrap.group().shutdownGracefully();
 	}
 
-	public String getIp() {
-		return ip;
+	public String getHost() {
+		return host;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	public int getPort() {
@@ -56,14 +52,6 @@ public class NettyClient {
 
 	public void setPort(int port) {
 		this.port = port;
-	}
-
-	public EventLoopGroup getWorkerGroup() {
-		return workerGroup;
-	}
-
-	public void setWorkerGroup(EventLoopGroup workerGroup) {
-		this.workerGroup = workerGroup;
 	}
 
 	public Bootstrap getBootstrap() {

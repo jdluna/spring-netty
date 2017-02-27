@@ -1,4 +1,4 @@
-package com.example.netty.iso8583;
+package com.example.netty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +9,10 @@ public class AppBootstrap {
 	
 	final static Logger logger = LoggerFactory.getLogger(AppBootstrap.class);
 
-	@SuppressWarnings("resource")
+	@SuppressWarnings({ "unused", "resource" })
 	public static void main(String[] args) throws InterruptedException {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		
-		
-		NettyServer nettyServer = appContext.getBean(NettyServer.class);
-		nettyServer.start();
+		logger.debug("App context started...");
 	}
 }

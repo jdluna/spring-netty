@@ -1,21 +1,18 @@
-package com.example.netty.iso8583;
-
-import java.util.List;
+package com.example.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+
+import java.util.List;
 
 public class NettyServer {
 	
-	private String ip;
+	private String host;
+	
 	private int port;
-
-	private EventLoopGroup bossGroup;
-	private EventLoopGroup workerGroup;
 
 	private ServerBootstrap bootstrap;
 
@@ -23,7 +20,6 @@ public class NettyServer {
 	
 	public void start() throws InterruptedException {
 		bootstrap
-			.group(bossGroup, workerGroup)
 			.childHandler(new ChannelInitializer<SocketChannel>() {
 				
                  @Override
@@ -34,22 +30,20 @@ public class NettyServer {
                     	 channelPipeline.addLast(channelHanlder);
                      }
                  }
-             });
-		
-		bootstrap.bind(ip, port);
+             })
+             .bind(host, port).sync();
 	}
 	
 	public void stop() {
-		bossGroup.shutdownGracefully();
-		workerGroup.shutdownGracefully();
+		bootstrap.group().shutdownGracefully();
 	}
 	
-	public String getIp() {
-		return ip;
+	public String getHost() {
+		return host;
 	}
 
-	public void setIp(String ip) {
-		this.ip = ip;
+	public void setHost(String host) {
+		this.host = host;
 	}
 
 	public int getPort() {
@@ -58,22 +52,6 @@ public class NettyServer {
 
 	public void setPort(int port) {
 		this.port = port;
-	}
-
-	public EventLoopGroup getBossGroup() {
-		return bossGroup;
-	}
-
-	public void setBossGroup(EventLoopGroup bossGroup) {
-		this.bossGroup = bossGroup;
-	}
-
-	public EventLoopGroup getWorkerGroup() {
-		return workerGroup;
-	}
-
-	public void setWorkerGroup(EventLoopGroup workerGroup) {
-		this.workerGroup = workerGroup;
 	}
 
 	public List<ChannelHandler> getChannelHandlers() {

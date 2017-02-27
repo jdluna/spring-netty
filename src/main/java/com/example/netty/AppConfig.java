@@ -1,6 +1,5 @@
-package com.example.netty.iso8583;
+package com.example.netty;
 
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
@@ -10,7 +9,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -19,6 +17,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
+import com.example.netty.iso8583.MessageFactory;
 import com.solab.iso8583.parse.ConfigParser;
 
 @Configuration
@@ -42,20 +41,15 @@ public class AppConfig {
 		return messageFactory;
 	}
 	
-	/* Server */
-	@Bean
-	public EventLoopGroup serverBossEventLoopGroup() {
-		return new NioEventLoopGroup();
-	}
-	
-	@Bean
-	public EventLoopGroup serverWorkerEventLoopGroup() {
+	@Bean(destroyMethod = "shutdownGracefully")
+	public EventLoopGroup eventLoop() {
 		return new NioEventLoopGroup();
 	}
 	
 	@Bean
 	public ServerBootstrap serverBootstrap() {
 		ServerBootstrap bootstrap = new ServerBootstrap();
+		bootstrap.group(eventLoop());
 		bootstrap.channel(NioServerSocketChannel.class);
 		return bootstrap;
 	}
@@ -65,43 +59,13 @@ public class AppConfig {
 		return new LoggingHandler(LogLevel.INFO);
 	}
 	
-	@Bean
+	@Bean(initMethod = "start")
 	public NettyServer nettyServer(List<ChannelHandler> channelHandlers) {
 		NettyServer server = new NettyServer();
-		server.setIp("localhost");
+		server.setHost("localhost");
 		server.setPort(5000);
-		server.setBossGroup(serverBossEventLoopGroup());
-		server.setWorkerGroup(serverWorkerEventLoopGroup());
 		server.setBootstrap(serverBootstrap());
 		server.setChannelHandlers(channelHandlers);
 		return server;
-	}
-	
-	/* Client */
-	
-	@Bean
-	public EventLoopGroup clientWorkerEventLoopGroup() {
-		return new NioEventLoopGroup();
-	}
-	
-	@Bean
-	public Bootstrap clientBootstrap() {
-		Bootstrap bootstrap = new Bootstrap();
-		bootstrap.channel(NioServerSocketChannel.class);
-		return bootstrap;
-	}
-	
-	@Bean
-	public NettyClient nettyClient() {
-		List<ChannelHandler> channelHandlers = new ArrayList<>();
-		channelHandlers.add(new LoggingHandler(LogLevel.INFO));
-		
-		NettyClient client = new NettyClient();
-		client.setIp("localhost");
-		client.setPort(5000);
-		client.setWorkerGroup(clientWorkerEventLoopGroup());
-		client.setBootstrap(clientBootstrap());
-		client.setChannelHandlers(channelHandlers);
-		return client;
 	}
 }
