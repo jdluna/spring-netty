@@ -7,21 +7,31 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.CharsetUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.example.netty.iso8583.handler.ServerHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
 
 @Configuration
 public class NettyConfig {
 
+	@Bean
+	public LoggingHandler loggingHandler() {
+		return new LoggingHandler(LogLevel.INFO);
+	}
+	
 	@Bean
 	public EventLoopGroup serverEventLoop() {
 		return new NioEventLoopGroup();
@@ -36,17 +46,22 @@ public class NettyConfig {
 	}
 	
 	@Bean
-	public LoggingHandler loggingHandler() {
-		return new LoggingHandler(LogLevel.INFO);
+	public List<ChannelHandler> serverHandlers() {
+		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
+		channelHandlers.add(loggingHandler());
+		channelHandlers.add(new StringDecoder(CharsetUtil.UTF_8));
+		channelHandlers.add(new ServerHandler());
+		channelHandlers.add(new StringEncoder(CharsetUtil.UTF_8));
+		return channelHandlers;
 	}
 	
 	@Bean(initMethod = "start", destroyMethod = "stop")
-	public NettyServer nettyServer(List<ChannelHandler> channelHandlers) {
+	public NettyServer nettyServer() {
 		NettyServer server = new NettyServer();
 		server.setHost("localhost");
 		server.setPort(5000);
 		server.setBootstrap(serverBootstrap());
-		server.setChannelHandlers(channelHandlers);
+		server.setChannelHandlers(serverHandlers());
 		return server;
 	}
 	
@@ -65,6 +80,15 @@ public class NettyConfig {
 		return bootstrap;
 	}
 	
+	@Bean
+	public List<ChannelHandler> clientHandlers() {
+		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
+		channelHandlers.add(loggingHandler());
+		channelHandlers.add(new StringDecoder(CharsetUtil.UTF_8));
+		channelHandlers.add(new StringEncoder(CharsetUtil.UTF_8));
+		return channelHandlers;
+	}
+	
 	@Bean(destroyMethod = "stop")
 	@Scope(scopeName = "prototype")
 	public NettyClient nettyClient(List<ChannelHandler> channelHandlers) {
@@ -72,7 +96,7 @@ public class NettyConfig {
 		nettyClient.setHost("localhost");
 		nettyClient.setPort(5000);
 		nettyClient.setBootstrap(clientBootstrap());
-		nettyClient.setChannelHandlers(channelHandlers);
+		nettyClient.setChannelHandlers(clientHandlers());
 		return nettyClient;
 	}
 }

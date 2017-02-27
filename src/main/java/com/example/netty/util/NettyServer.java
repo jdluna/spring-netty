@@ -47,6 +47,10 @@ public class NettyServer {
 		return channel.write(object);
 	}
 	
+	public ChannelFuture writeAndFlush(Object object) {
+		return channel.writeAndFlush(object);
+	}
+	
 	public void flush() {
 		channel.flush();
 	}

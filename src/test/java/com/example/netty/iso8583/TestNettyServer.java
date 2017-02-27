@@ -13,12 +13,13 @@ public class TestNettyServer extends AbstractTestCase {
 	ApplicationContext appContext;
 
 	@Test
-	public void doTest() {
+	public void doTest() throws InterruptedException {
 		NettyClient nettyClient = appContext.getBean(NettyClient.class);
 		
 		nettyClient.start();
+
+		//nettyClient.writeAndFlush("Hello");
 		
-		
-		nettyClient.stop();
+		//nettyClient.stop();
 	}
 }
