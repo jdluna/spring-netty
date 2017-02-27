@@ -73,15 +73,9 @@ public class NettyConfig {
 	
 	@Bean
 	@Scope(scopeName = "prototype")
-	public EventLoopGroup clientEventLoop() {
-		return new NioEventLoopGroup();
-	}
-	
-	@Bean
-	@Scope(scopeName = "prototype")
 	public Bootstrap clientBootstrap() {
 		Bootstrap bootstrap = new Bootstrap();
-		bootstrap.group(clientEventLoop());
+		bootstrap.group(new NioEventLoopGroup());
 		bootstrap.channel(NioSocketChannel.class);
 		return bootstrap;
 	}

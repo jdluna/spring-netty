@@ -22,7 +22,7 @@ public class NettyServer {
 
 	private List<ChannelHandler> channelHandlers;
 	
-	public synchronized void start() throws InterruptedException {
+	public synchronized void start() {
 		bootstrap
 			.childHandler(new ChannelInitializer<SocketChannel>() {
 				
@@ -36,7 +36,7 @@ public class NettyServer {
                  }
              });
 		
-        channel = bootstrap.bind(host, port).sync().channel();
+        channel = bootstrap.bind(host, port).syncUninterruptibly().channel();
 	}
 	
 	public synchronized void stop() {
