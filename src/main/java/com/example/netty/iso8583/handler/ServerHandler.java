@@ -22,5 +22,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<IsoMessage> {
 		
 		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_NEW"));
 		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_NEW"));
+		
+		ctx.channel().writeAndFlush(message);
 	}
 }
