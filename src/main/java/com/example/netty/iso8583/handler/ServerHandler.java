@@ -7,16 +7,20 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.solab.iso8583.IsoMessage;
+import com.solab.iso8583.IsoType;
+import com.solab.iso8583.IsoValue;
+
 @Sharable
-public class ServerHandler extends SimpleChannelInboundHandler<String> {
+public class ServerHandler extends SimpleChannelInboundHandler<IsoMessage> {
 
 	private static Logger logger = LoggerFactory.getLogger(ServerHandler.class);
 	
 	@Override
-	protected void channelRead0(ChannelHandlerContext paramChannelHandlerContext, String paramI) throws Exception {
-		logger.debug(paramI);
+	protected void channelRead0(ChannelHandlerContext ctx, IsoMessage message) throws Exception {
+		logger.debug("Server get message : " + message.debugString());
 		
-		paramChannelHandlerContext.writeAndFlush(paramI);
-		
+		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_NEW"));
+		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_NEW"));
 	}
 }

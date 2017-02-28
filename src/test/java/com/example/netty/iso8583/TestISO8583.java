@@ -43,9 +43,8 @@ public class TestISO8583 extends AbstractTestCase {
 		logger.debug("New Message -> {}", message.debugString());
 
 		byte[] messageData = message.writeData();
-		String isoHeader = messageFactory.getIsoHeader(0x200);
 
-		IsoMessage parseMessage = messageFactory.parseMessage(messageData, isoHeader.length());
+		IsoMessage parseMessage = messageFactory.parseMessage(messageData, 0);
 		logger.debug("Parse Message -> {}", parseMessage.debugString());
 
 		Assert.assertEquals(message.debugString(), parseMessage.debugString());
