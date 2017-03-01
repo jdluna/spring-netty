@@ -2,39 +2,45 @@ package com.example.netty.iso8583.codec;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
-
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 
 import com.example.netty.iso8583.MessageFactory;
 import com.solab.iso8583.IsoMessage;
 
-public class ISO8583Decoder extends ByteToMessageDecoder {
-	
-	private static Logger logger = LoggerFactory.getLogger(ISO8583Decoder.class);
+public class ISO8583Decoder extends LengthFieldBasedFrameDecoder {
 	
 	private final MessageFactory messageFactory;
 
 	public ISO8583Decoder(MessageFactory messageFactory) {
+		super(1048576, 0, 4, 0, 4);
 		this.messageFactory = messageFactory;
 	}
+	
+	@Override
+    protected Object decode(ChannelHandlerContext ctx, ByteBuf in) throws Exception {
+        ByteBuf frame = (ByteBuf) super.decode(ctx, in);
+        if (frame == null) {
+            return null;
+        }
+        
+        IsoMessage result = null;
+        
+        try {
+        	byte[] bytes = new byte[frame.readableBytes()];
+        	
+        	frame.getBytes(0, bytes);
+        	
+        	result = this.messageFactory.parseMessage(bytes, 0);
+        	
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
+        return result;
+    }
 
-	protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
-		if (byteBuf.isReadable()) {
-			try {
-				byte[] bytes = new byte[byteBuf.readableBytes()];
-				byteBuf.readBytes(bytes);
-				
-				IsoMessage isoMessage = this.messageFactory.parseMessage(bytes, 0);
-
-				out.add(isoMessage);
-				
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-	}
+    @Override
+    protected ByteBuf extractFrame(ChannelHandlerContext ctx, ByteBuf buffer, int index, int length) {
+        return buffer.slice(index, length);
+    }
 }

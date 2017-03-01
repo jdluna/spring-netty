@@ -47,8 +47,6 @@ public class TestNettyServer extends AbstractTestCase {
 			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM_" + i + "AA"));
 			
 			nettyClient1.writeAndFlush(message);
-			
-			Thread.sleep(1000);
 		}
 		
 		Thread.sleep(200000000);
