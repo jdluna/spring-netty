@@ -22,7 +22,7 @@ public class TestISO8583 extends AbstractTestCase {
 	MessageFactory messageFactory;
 
 	@Test
-	public void testGetMessageTempalte() {
+	public void testGetMessageTemplate() {
 		IsoMessage messageTemplate = messageFactory.getMessageTemplate(0x200);
 		Assert.assertNotNull(messageTemplate);
 	}
@@ -36,7 +36,7 @@ public class TestISO8583 extends AbstractTestCase {
 	}
 
 	@Test
-	public void testReadMessage() throws UnsupportedEncodingException, ParseException {
+	public void testParseMessage() throws UnsupportedEncodingException, ParseException {
 		IsoMessage message = messageFactory.newMessage(0x200);
 		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "700"));
 		
