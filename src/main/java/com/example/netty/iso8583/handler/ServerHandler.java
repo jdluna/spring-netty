@@ -4,6 +4,9 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.io.File;
+import java.io.FileWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +22,14 @@ public class ServerHandler extends SimpleChannelInboundHandler<IsoMessage> {
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, IsoMessage message) throws Exception {
 		logger.debug("Server get message : " + message.debugString());
+		
+		File file = new File("test.txt");
+		FileWriter fw = new FileWriter(file, true);
+		
+		fw.write(message.debugString());
+		fw.write("\n");
+		
+		fw.close();
 		
 		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_NEW"));
 		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_NEW"));

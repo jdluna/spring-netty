@@ -2,7 +2,9 @@ package com.example.netty.config;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -79,6 +81,9 @@ public class NettyConfig {
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.group(serverEventLoop());
 		bootstrap.channel(NioServerSocketChannel.class);
+		bootstrap.childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024);
+		bootstrap.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024);
+		bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 		return bootstrap;
 	}
 	
@@ -116,6 +121,9 @@ public class NettyConfig {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(new NioEventLoopGroup());
 		bootstrap.channel(NioSocketChannel.class);
+		bootstrap.option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024);
+		bootstrap.option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024);
+		bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 		return bootstrap;
 	}
 	
