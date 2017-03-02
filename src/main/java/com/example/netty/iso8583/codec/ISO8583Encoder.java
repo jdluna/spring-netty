@@ -9,8 +9,10 @@ import com.solab.iso8583.IsoMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.MessageToByteEncoder;
 
+@Sharable
 public class ISO8583Encoder extends MessageToByteEncoder<IsoMessage> {
 
 	protected void encode(ChannelHandlerContext ctx, IsoMessage isoMessage, ByteBuf out) throws Exception {

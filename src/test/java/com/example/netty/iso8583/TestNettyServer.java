@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 import com.example.netty.AbstractTestCase;
 import com.example.netty.util.NettyClient;
@@ -19,36 +20,41 @@ public class TestNettyServer extends AbstractTestCase {
 	private NettyServer nettyServer;
 	
 	@Autowired
-	private NettyClient nettyClient1;
+	private MessageFactory messageFactory;
 	
 	@Autowired
-	private MessageFactory messageFactory;
+	private ApplicationContext appContext;
 	
 	@Before
 	public void before() {
 		nettyServer.start();
-		nettyClient1.start();
 	}
 	
 	@Test
 	public void testOneMessage() throws InterruptedException {
+		NettyClient client = appContext.getBean(NettyClient.class);
+		client.start();
+		
 		IsoMessage message = messageFactory.newMessage(0x200);
 		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CUSTOM"));
 		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
 		
-		nettyClient1.writeAndFlush(message).sync();
+		client.writeAndFlush(message).sync();
 	}
 	
 	@Test
-	public void testBlocking() throws InterruptedException, ExecutionException {
+	public void testMultipleMessage() throws InterruptedException, ExecutionException {
+		NettyClient client = appContext.getBean(NettyClient.class);
+		client.start();
+		
 		for (int i = 0; i < 5; i++) {
 			IsoMessage message = messageFactory.newMessage(0x200);
 			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CUSTOM_" + i + "AA"));
 			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM_" + i + "AA"));
 			
-			nettyClient1.writeAndFlush(message);
+			client.writeAndFlush(message);
 		}
 		
-		Thread.sleep(200000000);
+		Thread.sleep(2000000);
 	}
 }

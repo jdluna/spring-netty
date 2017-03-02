@@ -128,6 +128,7 @@ public class NettyConfig {
 	}
 	
 	@Bean
+	@Scope(scopeName = "prototype")
 	public List<ChannelHandler> clientHandlers() {
 		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
 		channelHandlers.add(loggingHandler());
@@ -156,18 +157,24 @@ public class NettyConfig {
 	
 	// useful method
 	
+	@Bean
 	public ObjectEncoder objectEncoder() {
 		return new ObjectEncoder();
 	}
 	
-	public ObjectDecoder objectDecoder() {
-		return new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader()));
-	}
-	
+	@Bean
 	public ISO8583Encoder iso8583Encoder() {
 		return new ISO8583Encoder();
 	}
 	
+	@Bean
+	@Scope(scopeName = "prototype")
+	public ObjectDecoder objectDecoder() {
+		return new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader()));
+	}
+	
+	@Bean
+	@Scope(scopeName = "prototype")
 	public ISO8583Decoder iso8583Decoder() {
 		return new ISO8583Decoder(messageFactory());
 	}

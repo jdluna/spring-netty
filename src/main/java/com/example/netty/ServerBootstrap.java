@@ -8,9 +8,9 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import com.example.netty.config.AppConfig;
 import com.example.netty.util.NettyServer;
 
-public class AppBootstrap {
+public class ServerBootstrap {
 	
-	final static Logger logger = LoggerFactory.getLogger(AppBootstrap.class);
+	final static Logger logger = LoggerFactory.getLogger(ServerBootstrap.class);
 
 	@SuppressWarnings({ "resource" })
 	public static void main(String[] args) throws InterruptedException {
