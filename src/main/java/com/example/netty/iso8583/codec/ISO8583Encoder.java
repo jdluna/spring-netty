@@ -3,7 +3,7 @@ package com.example.netty.iso8583.codec;
 import java.io.ObjectOutputStream;
 
 import com.example.netty.iso8583.ISO8583BytesWrapper;
-import com.example.netty.util.CompactObjectOutputStream;
+import com.example.netty.stream.CompactObjectOutputStream;
 import com.solab.iso8583.IsoMessage;
 
 import io.netty.buffer.ByteBuf;

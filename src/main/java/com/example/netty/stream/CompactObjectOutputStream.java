@@ -1,4 +1,4 @@
-package com.example.netty.util;
+package com.example.netty.stream;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
