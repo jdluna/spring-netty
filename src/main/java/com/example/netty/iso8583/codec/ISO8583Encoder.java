@@ -1,36 +1,22 @@
 package com.example.netty.iso8583.codec;
 
-import java.io.ObjectOutputStream;
+import java.util.List;
 
 import com.example.netty.iso8583.ISO8583BytesWrapper;
-import com.example.netty.stream.CompactObjectOutputStream;
 import com.solab.iso8583.IsoMessage;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufOutputStream;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageEncoder;
 
 @Sharable
-public class ISO8583Encoder extends MessageToByteEncoder<IsoMessage> {
+public class ISO8583Encoder extends MessageToMessageEncoder<IsoMessage> {
 
-	protected void encode(ChannelHandlerContext ctx, IsoMessage isoMessage, ByteBuf out) throws Exception {
-		int startIdx = out.writerIndex();
-
-		ISO8583BytesWrapper message = new ISO8583BytesWrapper();
-		message.setBytes(isoMessage.writeData());
+	@Override
+	protected void encode(ChannelHandlerContext ctx, IsoMessage msg, List<Object> out) throws Exception {
+		ISO8583BytesWrapper wrapper = new ISO8583BytesWrapper();
+		wrapper.setBytes(msg.writeData());
 		
-		ByteBufOutputStream bout = new ByteBufOutputStream(out);
-        bout.write(new byte[4]);
-        
-        ObjectOutputStream oout = new CompactObjectOutputStream(bout);
-        oout.writeObject(message);
-        oout.flush();
-        oout.close();
-        
-		int endIdx = out.writerIndex();
-
-		out.setInt(startIdx, endIdx - startIdx - 4);
+		out.add(wrapper);
 	}
 }

@@ -1,8 +1,5 @@
 package com.example.netty.iso8583.codec;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 
@@ -11,7 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import com.example.netty.iso8583.ISO8583BytesWrapper;
 import com.example.netty.iso8583.MessageFactory;
-import com.solab.iso8583.IsoMessage;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 
 public class ISO8583Decoder extends SimpleChannelInboundHandler<ISO8583BytesWrapper> {
 
@@ -25,15 +24,13 @@ public class ISO8583Decoder extends SimpleChannelInboundHandler<ISO8583BytesWrap
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ISO8583BytesWrapper msg) throws Exception {
+		Object object = msg;
 		try {
-			IsoMessage isoMessage = this.messageFactory.parseMessage(msg.getBytes(), 0);
-			
-			ctx.fireChannelRead(isoMessage);
+			object = messageFactory.parseMessage(msg.getBytes(), 0);
 
 		} catch (ParseException | UnsupportedEncodingException e) {
 			logger.warn("message is not iso8583 -> forward to next handler");
-			
-			ctx.fireChannelRead(msg);
 		}
+		ctx.fireChannelRead(object);
 	}
 }

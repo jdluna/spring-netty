@@ -29,7 +29,13 @@ public class ISO8583ServerHandler extends SimpleChannelInboundHandler<IsoMessage
 		String remoteHost = socketAddress.getHostName();
 		int remotePort = socketAddress.getPort();
 		
-		File file = new File(String.format("iso8583_%s_%d.txt", remoteHost, remotePort));
+		File folder = new File("messages");
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+		
+		File file = new File(String.format("messages/iso8583_%s_%d.txt", remoteHost, remotePort));
+		
 		FileWriter fw = new FileWriter(file, true);
 		
 		fw.write(message.debugString());
