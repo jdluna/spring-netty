@@ -15,20 +15,19 @@ import com.solab.iso8583.IsoType;
 import com.solab.iso8583.IsoValue;
 
 @Sharable
-public class ServerHandler extends SimpleChannelInboundHandler<IsoMessage> {
+public class ISO8583ServerHandler extends SimpleChannelInboundHandler<IsoMessage> {
 
-	private static Logger logger = LoggerFactory.getLogger(ServerHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(ISO8583ServerHandler.class);
 	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, IsoMessage message) throws Exception {
 		logger.debug("Server get message : " + message.debugString());
 		
-		File file = new File("test.txt");
+		File file = new File("iso8583.txt");
 		FileWriter fw = new FileWriter(file, true);
 		
 		fw.write(message.debugString());
 		fw.write("\n");
-		
 		fw.close();
 		
 		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_NEW"));

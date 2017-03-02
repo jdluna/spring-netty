@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import com.solab.iso8583.IsoMessage;
 
 @Sharable
-public class ClientHandler extends SimpleChannelInboundHandler<IsoMessage> {
+public class ISO8583ClientHandler extends SimpleChannelInboundHandler<IsoMessage> {
 
-	private static Logger logger = LoggerFactory.getLogger(ClientHandler.class);
+	private static Logger logger = LoggerFactory.getLogger(ISO8583ClientHandler.class);
 	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, IsoMessage message) throws Exception {

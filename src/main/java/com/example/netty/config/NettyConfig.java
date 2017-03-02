@@ -30,8 +30,8 @@ import org.springframework.util.ClassUtils;
 import com.example.netty.iso8583.MessageFactory;
 import com.example.netty.iso8583.codec.ISO8583Decoder;
 import com.example.netty.iso8583.codec.ISO8583Encoder;
-import com.example.netty.iso8583.handler.ClientHandler;
-import com.example.netty.iso8583.handler.ServerHandler;
+import com.example.netty.iso8583.handler.ISO8583ClientHandler;
+import com.example.netty.iso8583.handler.ISO8583ServerHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
 import com.solab.iso8583.parse.ConfigParser;
@@ -98,7 +98,7 @@ public class NettyConfig {
 		channelHandlers.add(iso8583Encoder());
 		channelHandlers.add(iso8583Decoder());
 		
-		channelHandlers.add(new ServerHandler());
+		channelHandlers.add(new ISO8583ServerHandler());
 		
 		return channelHandlers;
 	}
@@ -138,7 +138,7 @@ public class NettyConfig {
 		channelHandlers.add(iso8583Encoder());
 		channelHandlers.add(iso8583Decoder());
 		
-		channelHandlers.add(new ClientHandler());
+		channelHandlers.add(new ISO8583ClientHandler());
 		
 		return channelHandlers;
 	}
