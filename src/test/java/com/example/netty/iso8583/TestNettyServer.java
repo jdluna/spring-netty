@@ -41,7 +41,7 @@ public class TestNettyServer extends AbstractTestCase {
 	
 	@Test
 	public void testBlocking() throws InterruptedException, ExecutionException {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 5; i++) {
 			IsoMessage message = messageFactory.newMessage(0x200);
 			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CUSTOM_" + i + "AA"));
 			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM_" + i + "AA"));

@@ -92,11 +92,11 @@ public class NettyConfig {
 		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
 		channelHandlers.add(loggingHandler());
 		
-		channelHandlers.add(iso8583Encoder());
-		channelHandlers.add(iso8583Decoder());
-		
 		channelHandlers.add(objectEncoder());
 		channelHandlers.add(objectDecoder());
+		
+		channelHandlers.add(iso8583Encoder());
+		channelHandlers.add(iso8583Decoder());
 		
 		channelHandlers.add(new ServerHandler());
 		
@@ -132,11 +132,11 @@ public class NettyConfig {
 		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
 		channelHandlers.add(loggingHandler());
 		
-		channelHandlers.add(iso8583Encoder());
-		channelHandlers.add(iso8583Decoder());
-		
 		channelHandlers.add(objectEncoder());
 		channelHandlers.add(objectDecoder());
+		
+		channelHandlers.add(iso8583Encoder());
+		channelHandlers.add(iso8583Decoder());
 		
 		channelHandlers.add(new ClientHandler());
 		
