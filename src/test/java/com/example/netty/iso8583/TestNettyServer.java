@@ -47,12 +47,37 @@ public class TestNettyServer extends AbstractTestCase {
 		NettyClient client = appContext.getBean(NettyClient.class);
 		client.start();
 		
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			IsoMessage message = messageFactory.newMessage(0x200);
-			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CUSTOM_" + i + "AA"));
-			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM_" + i + "AA"));
+			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CUSTOM_" + i));
+			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM_" + i));
 			
 			client.writeAndFlush(message);
+		}
+	}
+	
+	@Test
+	public void testMultipleMessageWithMultipleClients() throws InterruptedException, ExecutionException {
+		NettyClient client = appContext.getBean(NettyClient.class);
+		client.start();
+		
+		NettyClient client2 = appContext.getBean(NettyClient.class);
+		client2.start();
+		
+		for (int i = 0; i < 10; i++) {
+			IsoMessage message = messageFactory.newMessage(0x200);
+			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CLIENT1_" + i));
+			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CLIENT1_" + i));
+			
+			client.writeAndFlush(message);
+		}
+
+		for (int i = 0; i < 10; i++) {
+			IsoMessage message = messageFactory.newMessage(0x200);
+			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CLIENT2_" + i));
+			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CLIENT2_" + i));
+			
+			client2.writeAndFlush(message);
 		}
 		
 		Thread.sleep(2000000);

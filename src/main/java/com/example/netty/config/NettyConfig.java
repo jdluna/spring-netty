@@ -3,10 +3,12 @@ package com.example.netty.config;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.serialization.ClassResolvers;
@@ -16,7 +18,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -64,43 +65,34 @@ public class NettyConfig {
 		return messageFactory;
 	}
 	
-	@Bean
-	public LoggingHandler loggingHandler() {
-		return new LoggingHandler(LogLevel.INFO);
-	}
-	
 	// Server
 	
 	@Bean
-	public EventLoopGroup serverEventLoop() {
-		return new NioEventLoopGroup();
-	}
-	
-	@Bean
 	public ServerBootstrap serverBootstrap() {
-		ServerBootstrap bootstrap = new ServerBootstrap();
-		bootstrap.group(serverEventLoop());
-		bootstrap.channel(NioServerSocketChannel.class);
-		bootstrap.childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024);
-		bootstrap.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024);
-		bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+		ServerBootstrap bootstrap = new ServerBootstrap()
+			.group(new NioEventLoopGroup())
+			.channel(NioServerSocketChannel.class)
+			.childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024)
+			.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024)
+			.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+		
+			.handler(loggingHandler())
+			.childHandler(new ChannelInitializer<Channel>() {
+
+				@Override
+				protected void initChannel(Channel ch) throws Exception {
+					ch.pipeline()
+					  .addLast(objectEncoder())
+					  .addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader())))
+						
+					  .addLast(iso8583Encoder())
+					  .addLast(new ISO8583Decoder(messageFactory()))
+						
+					  .addLast(new ISO8583ServerHandler());
+				}
+			});
+		
 		return bootstrap;
-	}
-	
-	@Bean
-	public List<ChannelHandler> serverHandlers() {
-		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
-		channelHandlers.add(loggingHandler());
-		
-		channelHandlers.add(objectEncoder());
-		channelHandlers.add(objectDecoder());
-		
-		channelHandlers.add(iso8583Encoder());
-		channelHandlers.add(iso8583Decoder());
-		
-		channelHandlers.add(new ISO8583ServerHandler());
-		
-		return channelHandlers;
 	}
 	
 	@Bean(destroyMethod = "stop")
@@ -109,7 +101,6 @@ public class NettyConfig {
 		server.setHost(host);
 		server.setPort(port);
 		server.setBootstrap(serverBootstrap());
-		server.setChannelHandlers(serverHandlers());
 		return server;
 	}
 	
@@ -118,30 +109,31 @@ public class NettyConfig {
 	@Bean
 	@Scope(scopeName = "prototype")
 	public Bootstrap clientBootstrap() {
-		Bootstrap bootstrap = new Bootstrap();
-		bootstrap.group(new NioEventLoopGroup());
-		bootstrap.channel(NioSocketChannel.class);
-		bootstrap.option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024);
-		bootstrap.option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024);
-		bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+		Bootstrap bootstrap = new Bootstrap()
+			.group(new NioEventLoopGroup())
+			.channel(NioSocketChannel.class)
+			.option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024)
+			.option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024)
+			.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+		
+			.handler(new ChannelInitializer<SocketChannel>() {
+			
+				@Override
+				public void initChannel(SocketChannel ch) throws Exception {
+					 ch.pipeline()
+					   .addLast(loggingHandler())
+						
+				 	   .addLast(objectEncoder())
+				 	   .addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader())))
+					
+				 	   .addLast(iso8583Encoder())
+				 	   .addLast(new ISO8583Decoder(messageFactory()))
+					
+				 	   .addLast(new ISO8583ClientHandler());
+				}
+			});
+		
 		return bootstrap;
-	}
-	
-	@Bean
-	@Scope(scopeName = "prototype")
-	public List<ChannelHandler> clientHandlers() {
-		List<ChannelHandler> channelHandlers = new ArrayList<ChannelHandler>();
-		channelHandlers.add(loggingHandler());
-		
-		channelHandlers.add(objectEncoder());
-		channelHandlers.add(objectDecoder());
-		
-		channelHandlers.add(iso8583Encoder());
-		channelHandlers.add(iso8583Decoder());
-		
-		channelHandlers.add(new ISO8583ClientHandler());
-		
-		return channelHandlers;
 	}
 	
 	@Bean(destroyMethod = "stop")
@@ -151,11 +143,13 @@ public class NettyConfig {
 		nettyClient.setHost(host);
 		nettyClient.setPort(port);
 		nettyClient.setBootstrap(clientBootstrap());
-		nettyClient.setChannelHandlers(clientHandlers());
 		return nettyClient;
 	}
 	
-	// useful method
+	@Bean
+	public LoggingHandler loggingHandler() {
+		return new LoggingHandler(LogLevel.INFO);
+	}
 	
 	@Bean
 	public ObjectEncoder objectEncoder() {
@@ -165,17 +159,5 @@ public class NettyConfig {
 	@Bean
 	public ISO8583Encoder iso8583Encoder() {
 		return new ISO8583Encoder();
-	}
-	
-	@Bean
-	@Scope(scopeName = "prototype")
-	public ObjectDecoder objectDecoder() {
-		return new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader()));
-	}
-	
-	@Bean
-	@Scope(scopeName = "prototype")
-	public ISO8583Decoder iso8583Decoder() {
-		return new ISO8583Decoder(messageFactory());
 	}
 }

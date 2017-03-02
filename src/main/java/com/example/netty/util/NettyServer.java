@@ -3,12 +3,6 @@ package com.example.netty.util;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.socket.SocketChannel;
-
-import java.util.List;
 
 public class NettyServer {
 	
@@ -20,22 +14,7 @@ public class NettyServer {
 	
 	private Channel channel;
 
-	private List<ChannelHandler> channelHandlers;
-	
 	public synchronized void start() {
-		bootstrap
-			.childHandler(new ChannelInitializer<SocketChannel>() {
-				
-                 @Override
-                 public void initChannel(SocketChannel ch) {
-                     ChannelPipeline channelPipeline = ch.pipeline();
-                     
-                     for (ChannelHandler channelHanlder : channelHandlers) {
-                    	 channelPipeline.addLast(channelHanlder);
-                     }
-                 }
-             });
-		
         channel = bootstrap.bind(host, port).syncUninterruptibly().channel();
 	}
 	
@@ -69,14 +48,6 @@ public class NettyServer {
 
 	public void setPort(int port) {
 		this.port = port;
-	}
-
-	public List<ChannelHandler> getChannelHandlers() {
-		return channelHandlers;
-	}
-
-	public void setChannelHandlers(List<ChannelHandler> channelHandlers) {
-		this.channelHandlers = channelHandlers;
 	}
 
 	public ServerBootstrap getBootstrap() {
