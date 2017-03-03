@@ -36,7 +36,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-oxm</artifactId>
+		</dependency>
+		
 		<!-- Logging -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -63,6 +67,7 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Other -->
 		<dependency>
 			<groupId>net.sf.j8583</groupId>
 			<artifactId>j8583</artifactId>
