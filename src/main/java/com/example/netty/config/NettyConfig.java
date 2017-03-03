@@ -4,7 +4,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,8 +15,6 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -126,7 +123,7 @@ public class NettyConfig {
 	
 	@Bean(destroyMethod = "stop")
 	@Scope(scopeName = "prototype")
-	public NettyClient nettyClient(List<ChannelHandler> channelHandlers) {
+	public NettyClient nettyClient() {
 		NettyClient nettyClient = new NettyClient();
 		nettyClient.setHost(host);
 		nettyClient.setPort(port);

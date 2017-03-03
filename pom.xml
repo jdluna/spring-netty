@@ -117,7 +117,7 @@
 					<!-- MainClass in mainfest make a executable jar -->
 					<archive>
 						<manifest>
-							<mainClass>com.example.netty.AppBootstrap</mainClass>
+							<mainClass>com.example.netty.ServerBootstrap</mainClass>
 						</manifest>
 					</archive>
 
@@ -130,6 +130,23 @@
 						<goals>
 							<goal>single</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>target/generated-sources/jaxb</outputDirectory>
+							<packageName>com.example.netty.iso20022</packageName>
+							<schemaDirectory>src/main/resources/schema</schemaDirectory>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
