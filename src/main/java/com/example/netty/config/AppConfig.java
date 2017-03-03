@@ -14,6 +14,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import com.example.netty.iso20022.ObjectFactory;
+
 @Configuration
 @ComponentScan("com.example.netty")
 @PropertySource("classpath:application.properties")
@@ -38,5 +40,10 @@ public class AppConfig {
 	  
 	  marshaller.setMarshallerProperties(map);
       return marshaller;
+	}
+	
+	@Bean
+	public ObjectFactory objectFactory() {
+		return new ObjectFactory();
 	}
 }
