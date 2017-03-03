@@ -1,11 +1,10 @@
 package com.example.netty.util;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FutureAggregator<T> implements FutureListener<T> {
 
@@ -16,6 +15,7 @@ public class FutureAggregator<T> implements FutureListener<T> {
 	private FutureListener<T> listener;
 	
 	public void addFuture(Future<T> future) {
+		future.addListener(this);
 		futures.add(future);
 	}
 	
@@ -38,12 +38,10 @@ public class FutureAggregator<T> implements FutureListener<T> {
 	}
 	
 	public void syn() {
-		for (Future<T> future : futures) {
+		while (!isComplete()) {
 			try {
-				future.get();
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
 				e.printStackTrace();
 			}
 		}

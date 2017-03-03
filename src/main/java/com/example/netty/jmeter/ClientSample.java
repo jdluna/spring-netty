@@ -38,7 +38,9 @@ public class ClientSample {
 			
 			futureAggregator.addFuture(nettyClient.writeAndFlush(message));
 		}
-	
+		
 		futureAggregator.syn();
+		
+		nettyClient.stop();
 	}
 }

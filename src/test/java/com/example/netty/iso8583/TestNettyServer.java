@@ -48,7 +48,7 @@ public class TestNettyServer extends AbstractTestCase {
 		NettyClient client = appContext.getBean(NettyClient.class);
 		client.start();
 		
-		int nbMessage = 10;
+		int nbMessage = 50;
 		
 		FutureAggregator<Void> futureAggregator = new FutureAggregator<>();
 		
