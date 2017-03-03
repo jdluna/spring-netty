@@ -100,6 +100,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
 				<configuration>
 					<downloadSources>true</downloadSources>
 					<downloadJavadocs>true</downloadJavadocs>
@@ -134,22 +135,22 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>target/generated-sources/jaxb</outputDirectory>
-							<packageName>com.example.netty.iso20022</packageName>
-							<schemaDirectory>src/main/resources/schema</schemaDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <version>0.13.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                	<generatePackage>com.example.netty.iso20022</generatePackage>
+                	<schemaDirectory>src/main/resources/schema</schemaDirectory>
+                	<bindingDirectory>src/main/resources/xjb</bindingDirectory>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 	<name>spring-netty</name>
