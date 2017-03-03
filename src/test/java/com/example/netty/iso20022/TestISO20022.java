@@ -29,14 +29,8 @@ public class TestISO20022 extends AbstractTestCase {
 
 	@Test
 	public void testEncode() throws XmlMappingException, IOException, DatatypeConfigurationException {
-		GroupHeader48 groupHeader48 = objectFactory.createGroupHeader48();
-		groupHeader48.setCtrlSum(new BigDecimal(1));
-		groupHeader48.setMsgId("0001223");
-		groupHeader48.nbOfTxs = "000121";
-		
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
-		groupHeader48.creDtTm = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
 		
 		Authorisation1Choice authChoice = new Authorisation1Choice();
 		authChoice.prtry = "001";
@@ -45,18 +39,28 @@ public class TestISO20022 extends AbstractTestCase {
 		List<Authorisation1Choice> authstns = new ArrayList<>();
 		authstns.add(authChoice);
 		
-		groupHeader48.authstns = authstns;
-		
 		PartyIdentification43 partyId = new PartyIdentification43();
 		partyId.nm = "0232";
 		
+		GroupHeader48 groupHeader48 = objectFactory.createGroupHeader48();
+		groupHeader48.setMsgId("0001223");
+		groupHeader48.creDtTm = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+		groupHeader48.authstns = authstns;
+		groupHeader48.nbOfTxs = "000121";
+		groupHeader48.setCtrlSum(new BigDecimal(1));
 		groupHeader48.initgPty = partyId;
 	
+		PaymentInstruction9 pay9 = new PaymentInstruction9();
+		pay9.pmtInfId = "232";
+		
+		List<PaymentInstruction9> pay9List = new ArrayList<>();
+		pay9List.add(pay9);
+		
 		CustomerCreditTransferInitiationV05 cstmrCdtTrfInitn = new CustomerCreditTransferInitiationV05();
 		cstmrCdtTrfInitn.setGrpHdr(groupHeader48);
-		
+		cstmrCdtTrfInitn.pmtInves = pay9List;
 
-		Document document = objectFactory.createDocument();
+		Document document = new Document();
 		document.setCstmrCdtTrfInitn(cstmrCdtTrfInitn);
 		
 		marshaller.marshal(document, new StreamResult(new FileWriter("schema.xml")));
