@@ -14,7 +14,7 @@ public class FutureAggregator<T> implements FutureListener<T> {
 	
 	private FutureListener<T> listener;
 	
-	public void addFuture(Future<T> future) {
+	public synchronized void addFuture(Future<T> future) {
 		future.addListener(this);
 		futures.add(future);
 	}
@@ -24,7 +24,7 @@ public class FutureAggregator<T> implements FutureListener<T> {
 	}
 	
 	@Override
-	public void operationComplete(Future<T> future) throws Exception {
+	public synchronized void operationComplete(Future<T> future) throws Exception {
 		counter++;
 		if (counter == futures.size()) {
 			if (listener != null) {

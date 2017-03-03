@@ -17,30 +17,22 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.ClassUtils;
 
-import com.example.netty.iso8583.MessageFactory;
-import com.example.netty.iso8583.codec.ISO8583Decoder;
-import com.example.netty.iso8583.codec.ISO8583Encoder;
 import com.example.netty.iso8583.handler.ISO8583ClientHandler;
 import com.example.netty.iso8583.handler.ISO8583ServerHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
-import com.solab.iso8583.parse.ConfigParser;
 
 @Configuration
 public class NettyConfig {
-	
-	private static Logger logger = LoggerFactory.getLogger(NettyConfig.class);
 	
 	@Value("${server.host}")
 	private String host;
@@ -48,21 +40,17 @@ public class NettyConfig {
 	@Value("${server.port}")
 	private int port;
 	
+	@Autowired
+	private ISO8583Config iso8583Config;
+	
 	@Bean
-	public MessageFactory messageFactory() {
-		MessageFactory messageFactory = new MessageFactory();
-		messageFactory.setAssignDate(true);
-		messageFactory.setUseBinaryBitmap(true);
-		messageFactory.setUseBinaryMessages(true);
-		
-		try {
-			ConfigParser.configureFromClasspathConfig(messageFactory, "j8583.xml");
-			
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-		}
-		
-		return messageFactory;
+	public LoggingHandler loggingHandler() {
+		return new LoggingHandler(LogLevel.INFO);
+	}
+	
+	@Bean
+	public ObjectEncoder objectEncoder() {
+		return new ObjectEncoder();
 	}
 	
 	// Server
@@ -85,8 +73,8 @@ public class NettyConfig {
 					  .addLast(objectEncoder())
 					  .addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader())))
 						
-					  .addLast(iso8583Encoder())
-					  .addLast(new ISO8583Decoder(messageFactory()))
+					  .addLast(iso8583Config.iso8583Encoder())
+					  .addLast(iso8583Config.iso8583Decoder())
 						
 					  .addLast(new ISO8583ServerHandler());
 				}
@@ -126,8 +114,8 @@ public class NettyConfig {
 				 	   .addLast(objectEncoder())
 				 	   .addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader())))
 					
-				 	   .addLast(iso8583Encoder())
-				 	   .addLast(new ISO8583Decoder(messageFactory()))
+				 	   .addLast(iso8583Config.iso8583Encoder())
+				 	   .addLast(iso8583Config.iso8583Decoder())
 					
 				 	   .addLast(new ISO8583ClientHandler());
 				}
@@ -144,20 +132,5 @@ public class NettyConfig {
 		nettyClient.setPort(port);
 		nettyClient.setBootstrap(clientBootstrap());
 		return nettyClient;
-	}
-	
-	@Bean
-	public LoggingHandler loggingHandler() {
-		return new LoggingHandler(LogLevel.INFO);
-	}
-	
-	@Bean
-	public ObjectEncoder objectEncoder() {
-		return new ObjectEncoder();
-	}
-	
-	@Bean
-	public ISO8583Encoder iso8583Encoder() {
-		return new ISO8583Encoder();
 	}
 }
