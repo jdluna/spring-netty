@@ -40,7 +40,7 @@ public class FutureAggregator<T> implements FutureListener<T> {
 	public void syn() {
 		while (!isComplete()) {
 			try {
-				Thread.sleep(100);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
