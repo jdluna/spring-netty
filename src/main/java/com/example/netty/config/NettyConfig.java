@@ -106,6 +106,8 @@ public class NettyConfig {
 				@Override
 				public void initChannel(SocketChannel ch) throws Exception {
 					 ch.pipeline()
+					   //.addLast(new IdleStateHandler(30, 60, 0))
+					   //.addLast(new IdleHandler())
 					   .addLast(loggingHandler())
 						
 				 	   .addLast(objectEncoder())
