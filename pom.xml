@@ -135,22 +135,24 @@
 				</executions>
 			</plugin>
 			<plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.13.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                	<generatePackage>com.example.netty.iso20022</generatePackage>
-                	<schemaDirectory>src/main/resources/schema</schemaDirectory>
-                	<bindingDirectory>src/main/resources/xjb</bindingDirectory>
-                </configuration>
-            </plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.12.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<generatePackage>com.example.netty.iso20022</generatePackage>
+					<schemaDirectory>src/main/resources/schema</schemaDirectory>
+					<schemaIncludes>*.xsd</schemaIncludes>
+					<bindingDirectory>src/main/resources/xjb</bindingDirectory>
+					<bindingIncludes>*.xjb</bindingIncludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<name>spring-netty</name>
