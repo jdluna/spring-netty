@@ -12,11 +12,8 @@ public class IdleHandler extends ChannelDuplexHandler {
 		if (evt instanceof IdleStateEvent) {
 			 IdleStateEvent e = (IdleStateEvent) evt;
 			 
-             if (e.state() == IdleState.READER_IDLE) {
+             if (e.state() == IdleState.READER_IDLE || e.state() == IdleState.WRITER_IDLE) {
                  ctx.close();
-                 
-             } else if (e.state() == IdleState.WRITER_IDLE) {
-                 ctx.writeAndFlush("Heartbeat message");
              }
 		}		
 	}

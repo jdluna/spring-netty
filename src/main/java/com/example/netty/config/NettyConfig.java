@@ -15,6 +15,7 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,6 +26,7 @@ import org.springframework.util.ClassUtils;
 
 import com.example.netty.iso8583.handler.ISO8583ClientHandler;
 import com.example.netty.iso8583.handler.ISO8583ServerHandler;
+import com.example.netty.iso8583.handler.IdleHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
 
@@ -106,8 +108,8 @@ public class NettyConfig {
 				@Override
 				public void initChannel(SocketChannel ch) throws Exception {
 					 ch.pipeline()
-					   //.addLast(new IdleStateHandler(30, 60, 0))
-					   //.addLast(new IdleHandler())
+					   .addLast(new IdleStateHandler(30, 60, 0))
+					   .addLast(new IdleHandler())
 					   .addLast(loggingHandler())
 						
 				 	   .addLast(objectEncoder())
