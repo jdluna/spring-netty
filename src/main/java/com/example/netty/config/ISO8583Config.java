@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-import com.example.netty.iso8583.MessageFactory;
-import com.example.netty.iso8583.codec.ISO8583Decoder;
-import com.example.netty.iso8583.codec.ISO8583Encoder;
+import com.example.netty.base.iso8583.MessageFactory;
+import com.example.netty.base.iso8583.codec.ISO8583Decoder;
+import com.example.netty.base.iso8583.codec.ISO8583Encoder;
 import com.solab.iso8583.parse.ConfigParser;
 
 @Configuration

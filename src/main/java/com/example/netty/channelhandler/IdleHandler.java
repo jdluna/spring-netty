@@ -1,4 +1,4 @@
-package com.example.netty.iso8583.handler;
+package com.example.netty.channelhandler;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,4 +1,4 @@
-package com.example.netty.iso8583;
+package com.example.netty.base.iso8583;
 
 import java.io.Serializable;
 

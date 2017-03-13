@@ -24,9 +24,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.ClassUtils;
 
-import com.example.netty.iso8583.handler.ISO8583ClientHandler;
-import com.example.netty.iso8583.handler.ISO8583ServerHandler;
-import com.example.netty.iso8583.handler.IdleHandler;
+import com.example.netty.channelhandler.ClientHandler;
+import com.example.netty.channelhandler.IdleHandler;
+import com.example.netty.channelhandler.ServerHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
 
@@ -74,8 +74,10 @@ public class NettyConfig {
 						
 					  .addLast(iso8583Config.iso8583Encoder())
 					  .addLast(iso8583Config.iso8583Decoder())
-						
-					  .addLast(new ISO8583ServerHandler());
+					
+					  //.addLast(new ISO8583ServerHandler())
+					
+					  .addLast(new ServerHandler());
 				}
 			});
 		
@@ -118,7 +120,7 @@ public class NettyConfig {
 				 	   .addLast(iso8583Config.iso8583Encoder())
 				 	   .addLast(iso8583Config.iso8583Decoder())
 					
-				 	   .addLast(new ISO8583ClientHandler());
+				 	   .addLast(new ClientHandler());
 				}
 			});
 		

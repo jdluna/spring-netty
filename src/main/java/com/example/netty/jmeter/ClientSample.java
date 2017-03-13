@@ -5,8 +5,8 @@ import java.net.InetSocketAddress;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import com.example.netty.base.iso8583.MessageFactory;
 import com.example.netty.config.AppConfig;
-import com.example.netty.iso8583.MessageFactory;
 import com.example.netty.util.FutureAggregator;
 import com.example.netty.util.NettyClient;
 import com.solab.iso8583.IsoMessage;
