@@ -9,7 +9,7 @@ import com.solab.iso8583.IsoMessage;
 public class MessageRouter {
 
 	@Router(inputChannel = "messageChannel")
-	public String messageRouter(IsoMessage isoMessage) {
+	public String routeMessage(IsoMessage isoMessage) {
 		return "testChannel";
 	}
 }
