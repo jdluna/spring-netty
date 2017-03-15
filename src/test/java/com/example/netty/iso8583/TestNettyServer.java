@@ -42,8 +42,6 @@ public class TestNettyServer extends AbstractTestCase {
 		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
 		
 		client.writeAndFlush(message).sync();
-		
-		Thread.sleep(22200);
 	}
 	
 	@Test
@@ -51,7 +49,7 @@ public class TestNettyServer extends AbstractTestCase {
 		NettyClient client = appContext.getBean(NettyClient.class);
 		client.start();
 		
-		int nbMessage = 50;
+		int nbMessage = 2;
 		
 		FutureAggregator<Void> futureAggregator = new FutureAggregator<>();
 		
@@ -64,6 +62,8 @@ public class TestNettyServer extends AbstractTestCase {
 		}
 		
 		futureAggregator.syn();
+		
+		Thread.sleep(22200);
 	}
 	
 	@Test

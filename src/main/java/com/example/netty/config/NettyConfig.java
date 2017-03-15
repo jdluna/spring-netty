@@ -7,9 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.ClassUtils;
 
+import com.example.netty.base.channel.handler.RoutingHandler;
 import com.example.netty.channelhandler.ClientHandler;
-import com.example.netty.channelhandler.ServerHandler;
-import com.example.netty.endpoint.ServiceGateway;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
 
@@ -41,9 +40,6 @@ public class NettyConfig {
 	@Autowired
 	private ISO8583Config iso8583Config;
 
-	@Autowired
-	private ServiceGateway serviceGateway;
-	
 	@Bean
 	public LoggingHandler loggingHandler() {
 		return new LoggingHandler(LogLevel.INFO);
@@ -55,8 +51,8 @@ public class NettyConfig {
 	}
 	
 	@Bean
-	public ServerHandler serverHanler() {
-		return new ServerHandler(serviceGateway);
+	public RoutingHandler routingHandler() {
+		return new RoutingHandler();
 	}
 	
 	// Server
@@ -81,8 +77,8 @@ public class NettyConfig {
 						
 					  .addLast(iso8583Config.iso8583Encoder())
 					  .addLast(iso8583Config.iso8583Decoder())
-					
-					  .addLast(serverHanler());
+					  
+					  .addLast(routingHandler());
 				}
 			});
 		
