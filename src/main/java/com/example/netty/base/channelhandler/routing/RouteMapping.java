@@ -1,4 +1,4 @@
-package com.example.netty.base.channelhandler;
+package com.example.netty.base.channelhandler.routing;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

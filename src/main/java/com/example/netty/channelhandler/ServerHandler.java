@@ -6,7 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.netty.base.channelhandler.RouteMapping;
+import com.example.netty.base.channelhandler.routing.RouteMapping;
 import com.solab.iso8583.IsoMessage;
 
 @RouteMapping(name = "200")

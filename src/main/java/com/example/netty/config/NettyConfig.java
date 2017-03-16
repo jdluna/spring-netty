@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.ClassUtils;
 
-import com.example.netty.base.channelhandler.RoutingHandler;
+import com.example.netty.base.channelhandler.routing.RoutingHandler;
 import com.example.netty.channelhandler.ClientHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
