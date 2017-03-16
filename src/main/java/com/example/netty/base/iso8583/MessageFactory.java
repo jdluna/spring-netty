@@ -1,8 +1,14 @@
 package com.example.netty.base.iso8583;
 
-import com.solab.iso8583.IsoMessage;
+public class MessageFactory extends com.solab.iso8583.MessageFactory<ISO8583> {
 
-
-public class MessageFactory extends com.solab.iso8583.MessageFactory<IsoMessage> {
-
+	@Override
+	protected ISO8583 createIsoMessage(String header) {
+		return new ISO8583(header);
+	}
+	
+	@Override
+	protected ISO8583 createIsoMessageWithBinaryHeader(byte[] binHeader) {
+		return new ISO8583(binHeader);
+	}
 }

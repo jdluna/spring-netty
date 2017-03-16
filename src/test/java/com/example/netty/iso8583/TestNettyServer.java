@@ -37,12 +37,11 @@ public class TestNettyServer extends AbstractTestCase {
 		NettyClient client = appContext.getBean(NettyClient.class);
 		client.start();
 		
-		
 		IsoMessage message = messageFactory.newMessage(0x200);
 		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "Route1"));
 		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
 		
-		IsoMessage message2 = messageFactory.newMessage(0x200);
+		IsoMessage message2 = messageFactory.newMessage(0x300);
 		message2.setField(32, new IsoValue<String>(IsoType.LLVAR, "Route2"));
 		message2.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
 		
