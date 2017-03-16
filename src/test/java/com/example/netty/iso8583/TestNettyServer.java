@@ -37,11 +37,21 @@ public class TestNettyServer extends AbstractTestCase {
 		NettyClient client = appContext.getBean(NettyClient.class);
 		client.start();
 		
+		
 		IsoMessage message = messageFactory.newMessage(0x200);
-		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CUSTOM"));
+		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "Route1"));
 		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
 		
-		client.writeAndFlush(message).sync();
+		IsoMessage message2 = messageFactory.newMessage(0x200);
+		message2.setField(32, new IsoValue<String>(IsoType.LLVAR, "Route2"));
+		message2.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
+		
+		client.writeAndFlush(message);
+		
+		client.writeAndFlush(message2);
+		
+		
+		Thread.sleep(40000);
 	}
 	
 	@Test
@@ -49,19 +59,22 @@ public class TestNettyServer extends AbstractTestCase {
 		NettyClient client = appContext.getBean(NettyClient.class);
 		client.start();
 		
-		int nbMessage = 2;
+		int nbMessage = 1000;
 		
-		FutureAggregator<Void> futureAggregator = new FutureAggregator<>();
 		
 		for (int i = 0; i < nbMessage; i++) {
 			IsoMessage message = messageFactory.newMessage(0x200);
-			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "FIELD_32_CUSTOM_" + i));
-			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM_" + i));
+			message.setField(32, new IsoValue<String>(IsoType.LLVAR, "Route1"));
+			message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
 			
-			futureAggregator.addFuture(client.writeAndFlush(message));
+			client.writeAndFlush(message);
+			
+			IsoMessage message2 = messageFactory.newMessage(0x200);
+			message2.setField(32, new IsoValue<String>(IsoType.LLVAR, "Route2"));
+			message2.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
+			
+			client.writeAndFlush(message2);
 		}
-		
-		futureAggregator.syn();
 		
 		Thread.sleep(22200);
 	}

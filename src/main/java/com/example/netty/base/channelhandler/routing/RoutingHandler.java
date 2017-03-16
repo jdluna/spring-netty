@@ -3,6 +3,7 @@ package com.example.netty.base.channelhandler.routing;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.internal.StringUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +18,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.solab.iso8583.IsoMessage;
+import com.solab.iso8583.IsoValue;
 
 public class RoutingHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware, InitializingBean {
 
@@ -76,17 +78,38 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 			
 			if (handlerWrappers != null) {
 				for (RouteWrapper handlerWrapper : handlerWrappers) {
-					ctx.pipeline().addLast(handlerWrapper.getChannelHandler());
+					ChannelHandler channelHander = handlerWrapper.getChannelHandler();
+					
+					ctx.pipeline().addAfter(
+						StringUtil.simpleClassName(RoutingHandler.class) + "#0",
+						StringUtil.simpleClassName(channelHander.getClass()) + "#0",
+						channelHander
+					);
 				}
 			}
+
+			super.channelRead(ctx, msg);
+			
+			if (handlerWrappers != null) {
+				for (RouteWrapper handlerWrapper : handlerWrappers) {
+					ctx.pipeline().remove(handlerWrapper.getChannelHandler());
+				}
+			}
+			
+		} else {
+			super.channelRead(ctx, msg);
 		}
-		super.channelRead(ctx, msg);
 	}
 
 	protected String findRouteName(Object msg) {
 		String mappingValue = null;
 		if (msg instanceof IsoMessage) {
-			mappingValue = "200";
+			
+			IsoMessage message = (IsoMessage) msg;
+			
+			IsoValue<String> field = message.getField(32);
+			
+			mappingValue = field.getValue();
 		}
 		return mappingValue;
 	}

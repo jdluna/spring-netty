@@ -8,12 +8,9 @@ import java.lang.annotation.Target;
 
 import org.springframework.stereotype.Component;
 
-import io.netty.channel.ChannelHandler.Sharable;
-
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Sharable
 @Component
 public @interface RouteMapping {
 
