@@ -32,8 +32,9 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Map<String, Object> handlerMap = applicationContext.getBeansWithAnnotation(RouteMapping.class);
+		
 		Collection<String> handlerBeanNames = handlerMap.keySet();
-
+		
 		for (String channelBeanName : handlerBeanNames) {
 			Object handler = handlerMap.get(channelBeanName);
 
@@ -69,9 +70,9 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		String mappingValue = findRoute(msg);
-		if (mappingValue != null) {
-			List<RouteWrapper> handlerWrappers = channelHandlerMap.get(mappingValue);
+		String routeName = findRouteName(msg);
+		if (routeName != null) {
+			List<RouteWrapper> handlerWrappers = channelHandlerMap.get(routeName);
 			
 			if (handlerWrappers != null) {
 				for (RouteWrapper handlerWrapper : handlerWrappers) {
@@ -82,7 +83,7 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 		super.channelRead(ctx, msg);
 	}
 
-	protected String findRoute(Object msg) {
+	protected String findRouteName(Object msg) {
 		String mappingValue = null;
 		if (msg instanceof IsoMessage) {
 			mappingValue = "200";
