@@ -1,4 +1,4 @@
-package com.example.netty.base.channel.handler;
+package com.example.netty.base.channelhandler;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -15,7 +15,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 @Documented
 @Sharable
 @Component
-public @interface MessageMapping {
+public @interface RouteMapping {
 
 	String name() default "";
 	

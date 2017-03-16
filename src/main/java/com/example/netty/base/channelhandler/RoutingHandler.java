@@ -1,9 +1,12 @@
-package com.example.netty.base.channel.handler;
+package com.example.netty.base.channelhandler;
+
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,15 +18,11 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.solab.iso8583.IsoMessage;
 
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-
 public class RoutingHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware, InitializingBean {
 
 	private ApplicationContext applicationContext;
 
-	private Map<String, List<MessageHandlerWrapper>> channelHandlerMap = new HashMap<>();
+	private Map<String, List<RouteWrapper>> channelHandlerMap = new HashMap<>();
 
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -32,7 +31,7 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Map<String, Object> handlerMap = applicationContext.getBeansWithAnnotation(MessageMapping.class);
+		Map<String, Object> handlerMap = applicationContext.getBeansWithAnnotation(RouteMapping.class);
 		Collection<String> handlerBeanNames = handlerMap.keySet();
 
 		for (String channelBeanName : handlerBeanNames) {
@@ -41,15 +40,15 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 			if (handler instanceof ChannelHandler) {
 				ChannelHandler channelHander = (ChannelHandler) handler;
 
-				MessageMapping mapping = applicationContext.findAnnotationOnBean(channelBeanName, MessageMapping.class);
+				RouteMapping mapping = applicationContext.findAnnotationOnBean(channelBeanName, RouteMapping.class);
 				String mappingValue = mapping.name();
 
-				List<MessageHandlerWrapper> nextHandlers = channelHandlerMap.get(mappingValue);
+				List<RouteWrapper> nextHandlers = channelHandlerMap.get(mappingValue);
 				if (nextHandlers == null) {
 					nextHandlers = new ArrayList<>();
 				}
 				
-				MessageHandlerWrapper handlerWrapper = new MessageHandlerWrapper();
+				RouteWrapper handlerWrapper = new RouteWrapper();
 				handlerWrapper.setMapping(mapping);
 				handlerWrapper.setChannelHandler(channelHander);
 
@@ -59,67 +58,35 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 			}
 		}
 	
-		MessageHandlerWrapperComparator comparator = new MessageHandlerWrapperComparator();
+		RouteWrapperComparator comparator = new RouteWrapperComparator();
 		
 		Collection<String> mappingNames = channelHandlerMap.keySet();
 		for (String mappingName : mappingNames) {
-			List<MessageHandlerWrapper> mappingHandlers = channelHandlerMap.get(mappingName);
+			List<RouteWrapper> mappingHandlers = channelHandlerMap.get(mappingName);
 			Collections.sort(mappingHandlers, comparator);
 		}
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		String mappingValue = findMapping(msg);
+		String mappingValue = findRoute(msg);
 		if (mappingValue != null) {
-			List<MessageHandlerWrapper> handlerWrappers = channelHandlerMap.get(mappingValue);
-			for (MessageHandlerWrapper handlerWrapper : handlerWrappers) {
-				ctx.pipeline().addLast(handlerWrapper.getChannelHandler());
+			List<RouteWrapper> handlerWrappers = channelHandlerMap.get(mappingValue);
+			
+			if (handlerWrappers != null) {
+				for (RouteWrapper handlerWrapper : handlerWrappers) {
+					ctx.pipeline().addLast(handlerWrapper.getChannelHandler());
+				}
 			}
 		}
 		super.channelRead(ctx, msg);
 	}
 
-	protected String findMapping(Object msg) {
+	protected String findRoute(Object msg) {
 		String mappingValue = null;
 		if (msg instanceof IsoMessage) {
 			mappingValue = "200";
 		}
 		return mappingValue;
-	}
-
-	public class MessageHandlerWrapperComparator implements Comparator<MessageHandlerWrapper> {
-
-		@Override
-		public int compare(MessageHandlerWrapper o1, MessageHandlerWrapper o2) {
-			return o1.getMapping().order() > o2.getMapping().order() ? 1 : -1;
-		}
-	}
-
-	public class MessageHandlerWrapper {
-		
-		private MessageMapping mapping;
-		private ChannelHandler channelHandler;
-		
-		public MessageMapping getMapping() {
-			return mapping;
-		}
-
-		public void setMapping(MessageMapping mapping) {
-			this.mapping = mapping;
-		}
-
-		public ChannelHandler getChannelHandler() {
-			return channelHandler;
-		}
-
-		public void setChannelHandler(ChannelHandler channelHandler) {
-			this.channelHandler = channelHandler;
-		}
-
-		@Override
-		public String toString() {
-			return "MessageHandlerWrapper [mapping=" + mapping + ", channelHandler=" + channelHandler + "]";
-		}
 	}
 }
