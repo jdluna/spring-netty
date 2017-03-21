@@ -4,15 +4,15 @@ import io.netty.channel.ChannelHandler;
 
 public class RouteWrapper {
 
-	private RouteMapping mapping;
+	private int order;
 	private ChannelHandler channelHandler;
 
-	public RouteMapping getMapping() {
-		return mapping;
+	public int getOrder() {
+		return order;
 	}
 
-	public void setMapping(RouteMapping mapping) {
-		this.mapping = mapping;
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
 	public ChannelHandler getChannelHandler() {
@@ -25,7 +25,6 @@ public class RouteWrapper {
 
 	@Override
 	public String toString() {
-		return "MessageHandlerWrapper [mapping=" + mapping
-				+ ", channelHandler=" + channelHandler + "]";
+		return "RouteWrapper [order=" + order + ", channelHandler=" + channelHandler + "]";
 	}
 }

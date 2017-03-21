@@ -10,8 +10,8 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-@RouteMapping(name = "300")
 @Sharable
+@RouteMapping(name = "300")
 public class ServerHandler2 extends SimpleChannelInboundHandler<ISO8583> {
 
 	private static Logger logger = LoggerFactory.getLogger(ServerHandler2.class);

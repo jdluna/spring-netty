@@ -22,10 +22,18 @@ import io.netty.util.internal.StringUtil;
 @Sharable
 public class RoutingHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware, InitializingBean {
 
+	private String name = StringUtil.simpleClassName(RoutingHandler.class) + "#0";
+	
 	private ApplicationContext applicationContext;
 
 	private Map<String, List<RouteWrapper>> channelHandlerMap = new HashMap<>();
 
+	public RoutingHandler() {}
+	
+	public RoutingHandler(String name) {
+		this.name = name;
+	}
+	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
@@ -35,32 +43,36 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 	public void afterPropertiesSet() throws Exception {
 		Map<String, Object> handlerMap = applicationContext.getBeansWithAnnotation(RouteMapping.class);
 		
-		Collection<String> handlerBeanNames = handlerMap.keySet();
+		Collection<String> handlerNames = handlerMap.keySet();
 		
-		for (String channelBeanName : handlerBeanNames) {
-			Object handler = handlerMap.get(channelBeanName);
+		for (String handlerName : handlerNames) {
+			Object handler = handlerMap.get(handlerName);
 
 			if (handler instanceof ChannelHandler) {
 				ChannelHandler channelHander = (ChannelHandler) handler;
 
-				RouteMapping mapping = applicationContext.findAnnotationOnBean(channelBeanName, RouteMapping.class);
-				String mappingValue = mapping.name();
+				RouteMapping routeMapping = applicationContext.findAnnotationOnBean(handlerName, RouteMapping.class);
+				String routeName = routeMapping.name();
+				
+				Assert.notNull(routeName, "Route name cannot be null inside " + StringUtil.simpleClassName(channelHander));
 
-				List<RouteWrapper> nextHandlers = channelHandlerMap.get(mappingValue);
-				if (nextHandlers == null) {
-					nextHandlers = new ArrayList<>();
+				List<RouteWrapper> routeHandlers = channelHandlerMap.get(routeName);
+				if (routeHandlers == null) {
+					routeHandlers = new ArrayList<>();
 				}
 				
 				RouteWrapper handlerWrapper = new RouteWrapper();
-				handlerWrapper.setMapping(mapping);
+				handlerWrapper.setOrder(routeMapping.order());
 				handlerWrapper.setChannelHandler(channelHander);
 
-				nextHandlers.add(handlerWrapper);
+				routeHandlers.add(handlerWrapper);
 
-				channelHandlerMap.put(mappingValue, nextHandlers);
+				channelHandlerMap.put(routeName, routeHandlers);
 			}
 		}
 	
+		// order route handlers based on order field
+		
 		RouteWrapperComparator comparator = new RouteWrapperComparator();
 		
 		Collection<String> mappingNames = channelHandlerMap.keySet();
@@ -74,25 +86,25 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (msg instanceof Routable) {
 			String routeName = ((Routable) msg).getName();
-			
-			Assert.notNull(routeName, "Route name cannot be null");
 
-			List<RouteWrapper> handlerWrappers = channelHandlerMap.get(routeName);
-			
+			// register route handlers
+			List<RouteWrapper> handlerWrappers = channelHandlerMap.get(routeName);			
 			if (handlerWrappers != null) {
 				for (RouteWrapper handlerWrapper : handlerWrappers) {
 					ChannelHandler channelHander = handlerWrapper.getChannelHandler();
 					
 					ctx.pipeline().addAfter(
-							StringUtil.simpleClassName(RoutingHandler.class) + "#0",
-							StringUtil.simpleClassName(channelHander.getClass()) + "#0",
-							channelHander
-							);
+						name,
+						StringUtil.simpleClassName(channelHander),
+						channelHander
+					);
 				}
 			}
 			
+			// invoke next handler
 			super.channelRead(ctx, msg);
 			
+			// clear route handlers
 			if (handlerWrappers != null) {
 				for (RouteWrapper handlerWrapper : handlerWrappers) {
 					ctx.pipeline().remove(handlerWrapper.getChannelHandler());

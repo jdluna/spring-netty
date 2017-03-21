@@ -10,8 +10,8 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-@RouteMapping(name = "200")
 @Sharable
+@RouteMapping(name = "200")
 public class ServerHandler extends SimpleChannelInboundHandler<ISO8583> {
 
 	private static Logger logger = LoggerFactory.getLogger(ServerHandler.class);
@@ -19,6 +19,8 @@ public class ServerHandler extends SimpleChannelInboundHandler<ISO8583> {
 	@Override
 	protected void channelRead0(final ChannelHandlerContext ctx, ISO8583 request) throws Exception {
 		logger.debug("Server 1 get message : " + request.debugString());
+		
+		//Thread.sleep(10000);
 		
 		ctx.channel().writeAndFlush(request);	
 	}
