@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 @Component
 public @interface RouteMapping {
 
-	String name() default "";
+	String name();
+	
+	String group();
 	
 	int order() default 0;
 }

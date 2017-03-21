@@ -11,6 +11,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.Assert;
 
 import io.netty.channel.ChannelHandler;
@@ -22,16 +23,21 @@ import io.netty.util.internal.StringUtil;
 @Sharable
 public class RoutingHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware, InitializingBean {
 
-	private String name = StringUtil.simpleClassName(RoutingHandler.class) + "#0";
+	private String name;
+	
+	private String group;
 	
 	private ApplicationContext applicationContext;
 
 	private Map<String, List<RouteWrapper>> channelHandlerMap = new HashMap<>();
 
-	public RoutingHandler() {}
+	public RoutingHandler(String group) {
+		this(StringUtil.simpleClassName(RoutingHandler.class) + "#0", group);
+	}
 	
-	public RoutingHandler(String name) {
+	public RoutingHandler(String name, String group) {
 		this.name = name;
+		this.group = group;
 	}
 	
 	@Override
@@ -51,7 +57,13 @@ public class RoutingHandler extends ChannelInboundHandlerAdapter implements Appl
 			if (handler instanceof ChannelHandler) {
 				ChannelHandler channelHander = (ChannelHandler) handler;
 
-				RouteMapping routeMapping = applicationContext.findAnnotationOnBean(handlerName, RouteMapping.class);
+				RouteMapping routeMapping = AnnotationUtils.findAnnotation(channelHander.getClass(), RouteMapping.class);
+				String routeGroup = routeMapping.group();
+				
+				if (!this.group.equals(routeGroup)) {
+					continue;
+				}
+				
 				String routeName = routeMapping.name();
 				
 				Assert.notNull(routeName, "Route name cannot be null inside " + StringUtil.simpleClassName(channelHander));

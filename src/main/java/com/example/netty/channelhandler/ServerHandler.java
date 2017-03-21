@@ -13,7 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 @Sharable
-@RouteMapping(name = "200")
+@RouteMapping(name = "200", group = "server")
 public class ServerHandler extends SimpleChannelInboundHandler<ISO8583> {
 
 	private static Logger logger = LoggerFactory.getLogger(ServerHandler.class);

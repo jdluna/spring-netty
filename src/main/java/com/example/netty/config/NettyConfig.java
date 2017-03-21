@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.ClassUtils;
 
 import com.example.netty.base.channelhandler.routing.RoutingHandler;
-import com.example.netty.channelhandler.ClientHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
 
@@ -50,17 +49,17 @@ public class NettyConfig {
 		return new ObjectEncoder();
 	}
 	
-	@Bean
-	public RoutingHandler routingHandler() {
-		return new RoutingHandler();
-	}
-	
 	// Server
+	
+	@Bean
+	public RoutingHandler serverRoutingHandler() {
+		return new RoutingHandler("server");
+	}
 	
 	@Bean
 	public ServerBootstrap serverBootstrap() {
 		ServerBootstrap bootstrap = new ServerBootstrap()
-			.group(new NioEventLoopGroup())
+			.group(new NioEventLoopGroup(), new NioEventLoopGroup())
 			.channel(NioServerSocketChannel.class)
 			.childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024)
 			.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024)
@@ -78,7 +77,7 @@ public class NettyConfig {
 					  .addLast(iso8583Config.iso8583Encoder())
 					  .addLast(iso8583Config.iso8583Decoder())
 					  
-					  .addLast(routingHandler());
+					  .addLast(serverRoutingHandler());
 				}
 			});
 		
@@ -95,6 +94,11 @@ public class NettyConfig {
 	}
 	
 	// Client
+	
+	@Bean
+	public RoutingHandler clientRoutingHandler() {
+		return new RoutingHandler("client");
+	}
 	
 	@Bean
 	@Scope(scopeName = "prototype")
@@ -119,7 +123,7 @@ public class NettyConfig {
 				 	   .addLast(iso8583Config.iso8583Encoder())
 				 	   .addLast(iso8583Config.iso8583Decoder())
 					
-				 	   .addLast(new ClientHandler());
+				 	  .addLast(clientRoutingHandler());
 				}
 			});
 		
