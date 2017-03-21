@@ -1,5 +1,11 @@
 package com.example.netty.config;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +16,7 @@ import org.springframework.util.ClassUtils;
 import com.example.netty.base.channelhandler.routing.RoutingHandler;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;
+import com.example.netty.util.SSLContextBuilder;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
@@ -26,6 +33,7 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.ssl.SslHandler;
 
 @Configuration
 public class NettyConfig {
@@ -51,6 +59,23 @@ public class NettyConfig {
 	
 	// Server
 	
+	@Bean 
+	public SslHandler serverSSLHandler() throws GeneralSecurityException, IOException {
+		SSLContext sslContext = new SSLContextBuilder()
+			.keyStore("classpath:certificate/server-keystore.jks")
+			.keyStorePassword("changeit")
+			.trustStore("classpath:certificate/server-truststore.jks")
+			.trustStorePassword("changeit")
+			.build();
+		
+		SSLEngine sslEngine = sslContext.createSSLEngine();
+		sslEngine.setNeedClientAuth(true);
+		sslEngine.setUseClientMode(false);
+		
+		SslHandler handler = new SslHandler(sslEngine);
+		return handler;
+	}
+	
 	@Bean
 	public RoutingHandler serverRoutingHandler() {
 		return new RoutingHandler("server");
@@ -65,12 +90,14 @@ public class NettyConfig {
 			.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024)
 			.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
 		
-			.handler(loggingHandler())
+			
 			.childHandler(new ChannelInitializer<Channel>() {
 
 				@Override
 				protected void initChannel(Channel ch) throws Exception {
 					ch.pipeline()
+					  .addFirst(serverSSLHandler())
+					  .addFirst(loggingHandler())
 					  .addLast(objectEncoder())
 					  .addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader())))
 						
@@ -95,6 +122,22 @@ public class NettyConfig {
 	
 	// Client
 	
+	@Bean 
+	public SslHandler clientSSLHandler() throws GeneralSecurityException, IOException {
+		SSLContext sslContext = new SSLContextBuilder()
+			.keyStore("classpath:certificate/client-keystore.jks")
+			.keyStorePassword("changeit")
+			.trustStore("classpath:certificate/client-truststore.jks")
+			.trustStorePassword("changeit")
+			.build();
+		
+		SSLEngine sslEngine = sslContext.createSSLEngine();
+		sslEngine.setUseClientMode(false);
+		
+		SslHandler handler = new SslHandler(sslEngine);
+		return handler;
+	}
+	
 	@Bean
 	public RoutingHandler clientRoutingHandler() {
 		return new RoutingHandler("client");
@@ -115,8 +158,10 @@ public class NettyConfig {
 				@Override
 				public void initChannel(SocketChannel ch) throws Exception {
 					 ch.pipeline()
+					   .addFirst(clientSSLHandler())
+					   
 					   .addLast(loggingHandler())
-						
+					   
 				 	   .addLast(objectEncoder())
 				 	   .addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(ClassUtils.getDefaultClassLoader())))
 					
