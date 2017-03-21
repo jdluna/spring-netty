@@ -14,10 +14,12 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.internal.StringUtil;
 
+@Sharable
 public class RoutingHandler extends ChannelInboundHandlerAdapter implements ApplicationContextAware, InitializingBean {
 
 	private ApplicationContext applicationContext;
