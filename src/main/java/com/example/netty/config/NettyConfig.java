@@ -7,10 +7,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.env.Environment;
 import org.springframework.util.ClassUtils;
 
 import com.example.netty.base.channelhandler.routing.RoutingHandler;
@@ -37,12 +37,9 @@ import io.netty.handler.ssl.SslHandler;
 
 @Configuration
 public class NettyConfig {
-	
-	@Value("${server.host}")
-	private String host;
-	
-	@Value("${server.port}")
-	private int port;
+
+	@Autowired
+	private Environment env;
 	
 	@Autowired
 	private ISO8583Config iso8583Config;
@@ -59,18 +56,17 @@ public class NettyConfig {
 	
 	// Server
 	
-	@Bean 
 	public SslHandler serverSSLHandler() throws GeneralSecurityException, IOException {
 		SSLContext sslContext = new SSLContextBuilder()
-			.keyStore("classpath:certificate/server-keystore.jks")
-			.keyStorePassword("changeit")
-			.trustStore("classpath:certificate/server-truststore.jks")
-			.trustStorePassword("changeit")
+			.keyStore(env.getProperty("server.keystore.path"))
+			.keyStorePassword(env.getProperty("server.keystore.password"))
+			.trustStore(env.getProperty("server.truststore.path"))
+			.trustStorePassword(env.getProperty("server.truststore.password"))
 			.build();
 		
 		SSLEngine sslEngine = sslContext.createSSLEngine();
-		sslEngine.setNeedClientAuth(true);
 		sslEngine.setUseClientMode(false);
+		sslEngine.setNeedClientAuth(true);
 		
 		SslHandler handler = new SslHandler(sslEngine);
 		return handler;
@@ -114,25 +110,24 @@ public class NettyConfig {
 	@Bean(destroyMethod = "stop")
 	public NettyServer nettyServer() {
 		NettyServer server = new NettyServer();
-		server.setHost(host);
-		server.setPort(port);
+		server.setHost(env.getProperty("server.host"));
+		server.setPort(env.getProperty("server.port", Integer.class));
 		server.setBootstrap(serverBootstrap());
 		return server;
 	}
 	
 	// Client
 	
-	@Bean 
 	public SslHandler clientSSLHandler() throws GeneralSecurityException, IOException {
 		SSLContext sslContext = new SSLContextBuilder()
-			.keyStore("classpath:certificate/client-keystore.jks")
-			.keyStorePassword("changeit")
-			.trustStore("classpath:certificate/client-truststore.jks")
-			.trustStorePassword("changeit")
+			.keyStore(env.getProperty("client.keystore.path"))
+			.keyStorePassword(env.getProperty("client.keystore.password"))
+			.trustStore(env.getProperty("client.truststore.path"))
+			.trustStorePassword(env.getProperty("client.truststore.password"))
 			.build();
 		
 		SSLEngine sslEngine = sslContext.createSSLEngine();
-		sslEngine.setUseClientMode(false);
+		sslEngine.setUseClientMode(true);
 		
 		SslHandler handler = new SslHandler(sslEngine);
 		return handler;
@@ -179,8 +174,8 @@ public class NettyConfig {
 	@Scope(scopeName = "prototype")
 	public NettyClient nettyClient() {
 		NettyClient nettyClient = new NettyClient();
-		nettyClient.setHost(host);
-		nettyClient.setPort(port);
+		nettyClient.setHost(env.getProperty("server.host"));
+		nettyClient.setPort(env.getProperty("server.port", Integer.class));
 		nettyClient.setBootstrap(clientBootstrap());
 		return nettyClient;
 	}
