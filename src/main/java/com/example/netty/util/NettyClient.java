@@ -1,11 +1,18 @@
 package com.example.netty.util;
 
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 
 public class NettyClient {
-
+	
+	final static Logger logger = LoggerFactory.getLogger(NettyClient.class);
+	
 	private String host;
 	
 	private int port;
@@ -19,7 +26,14 @@ public class NettyClient {
 	}
 	
 	public synchronized void stop() {
-		bootstrap.group().shutdownGracefully().syncUninterruptibly();
+		try {
+			channel.deregister().await();
+			
+			channel.close().await(10, TimeUnit.SECONDS);
+			
+		} catch (InterruptedException e) {
+			 logger.error("Error while stopping the server", e);
+		}
 	}
 	
 	public ChannelFuture write(Object object) {
