@@ -77,6 +77,8 @@ public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter imple
 					handler.handle(ctx, msg);
 				}
 			}
+		} else {
+			super.channelRead(ctx, msg);
 		}
 	}
 	
