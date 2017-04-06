@@ -64,11 +64,11 @@ public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter imple
 			if (handler != null) {
 				Class<?> supportClass = null;
 				
-				Type type = AopUtils.getTargetClass(handler).getClass().getGenericSuperclass();
+				Type type = AopUtils.getTargetClass(handler).getGenericInterfaces()[0];
 				if (type instanceof ParameterizedType) {
-				    ParameterizedType parameterizedType = (ParameterizedType) type;
-				    Type[] typeArguments = parameterizedType.getActualTypeArguments();
-				    supportClass = (Class<?>) typeArguments[0];
+					ParameterizedType parameterizedType = (ParameterizedType) type;
+			        Type[] typeArguments = parameterizedType.getActualTypeArguments();
+			        supportClass = (Class<?>) typeArguments[0];
 				}
 				
 				if (supportClass != null) {

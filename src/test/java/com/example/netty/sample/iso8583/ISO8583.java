@@ -16,9 +16,10 @@ public class ISO8583 extends IsoMessage implements Routable {
 
 	@Override
 	public String getRouteName() {
-		String msgType = Integer.toHexString(getType());
+		String msgType = String.format("%04d", new Integer(Integer.toHexString(getType())));
 		IsoValue<String> processingCodeField = getField(3);
-		return new String(msgType + "_" + processingCodeField.getValue()).substring(0, 2);
+		
+		return new String(msgType + "_" + processingCodeField.getValue().substring(0, 2));
 	}
 	
 	@Override

@@ -29,7 +29,11 @@ public class ClientSample {
 			IsoValue<String> processingCode = new IsoValue<String>(IsoType.ALPHA, "010000", 6);
 			message.setField(3, processingCode);
 			
-			nettyClient.send(message);
+			nettyClient.send(message).sync();
+			
+			Thread.sleep(2000);
+			
+			nettyClient.send(message).sync();
 		}
 		
 //		nettyClient.stop();
