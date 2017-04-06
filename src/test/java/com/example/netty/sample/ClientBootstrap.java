@@ -10,7 +10,7 @@ import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.IsoType;
 import com.solab.iso8583.IsoValue;
 
-public class ClientSample {
+public class ClientBootstrap {
 	
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws InterruptedException {
@@ -26,16 +26,14 @@ public class ClientSample {
 		for (int i = 0; i < msgNum; i++) {
 			IsoMessage message = msgFacotry.newMessage(0x200);
 			
-			IsoValue<String> processingCode = new IsoValue<String>(IsoType.ALPHA, "010000", 6);
+			IsoValue<String> processingCode = new IsoValue<String>(IsoType.ALPHA, "300000", 6);
 			message.setField(3, processingCode);
-			
-			nettyClient.send(message).sync();
-			
-			Thread.sleep(2000);
 			
 			nettyClient.send(message).sync();
 		}
 		
-//		nettyClient.stop();
+		Thread.sleep(5000);
+		
+		nettyClient.stop();
 	}
 }

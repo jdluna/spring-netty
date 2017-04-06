@@ -20,5 +20,9 @@ public class ServerBootstrap {
 		nettyServer.start();
 		
 		logger.debug("Netty server started at {}:{}", nettyServer.getHost(), nettyServer.getPort());
+		
+		Thread.sleep(5000);
+		
+		nettyServer.stop();
 	}
 }

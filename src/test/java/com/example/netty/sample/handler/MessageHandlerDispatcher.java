@@ -17,6 +17,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.ReferenceCountUtil;
 
 public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter implements ApplicationContextAware, InitializingBean {
 
@@ -80,7 +81,11 @@ public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter imple
 				if (supportClass != null) {
 					logger.debug("Route message {} to handler {}", msg.toString(), handler);
 					
-					handler.handle(ctx, msg);
+					try {
+						handler.handle(ctx, msg);
+					} finally {
+						ReferenceCountUtil.release(msg);
+					}
 				}
 			}
 		} else {

@@ -19,7 +19,5 @@ public class ServerBootstrap {
 		
 		NettyServer nettyServer = appContext.getBean(NettyServer.class);
 		nettyServer.start();
-		
-		logger.debug("Netty server started at {}:{}", nettyServer.getHost(), nettyServer.getPort());
 	}
 }

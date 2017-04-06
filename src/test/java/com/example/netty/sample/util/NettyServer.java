@@ -1,12 +1,14 @@
 package com.example.netty.sample.util;
 
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
+import com.example.netty.sample.bootstrap.ServerConfiguration;
 
 public class NettyServer {
 	
@@ -15,24 +17,38 @@ public class NettyServer {
 	private String host;
 	
 	private int port;
-
+	
+	private ServerConfiguration configuration;
+	
 	private ServerBootstrap bootstrap;
 	
 	private Channel channel;
 
 	public synchronized void start() {
-        channel = bootstrap.bind(host, port).syncUninterruptibly().channel();
-        logger.debug("Netty server start at {}:{}", host, port);
+		try {
+			bootstrap = configuration.build();
+			
+			this.channel = bootstrap.bind(host, port).sync().channel();
+			
+			logger.debug("Netty server started at {}:{}", host, port);
+			
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage(), e);
+		}
 	}
 	
 	public synchronized void stop() {
 		try {
 			channel.deregister().await();
+			channel.close().sync().await(10, TimeUnit.SECONDS);
 			
-			channel.close().await(10, TimeUnit.SECONDS);
+			bootstrap.group().shutdownGracefully();
+			bootstrap.childGroup().shutdownGracefully();
+			
+			logger.debug("Netty server stopped at {}:{}", host, port);
 			
 		} catch (InterruptedException e) {
-			 logger.error("Error while stopping netty server", e);
+			logger.error(e.getMessage(), e);
 		}
 	}
 	
@@ -52,11 +68,11 @@ public class NettyServer {
 		this.port = port;
 	}
 
-	public ServerBootstrap getBootstrap() {
-		return bootstrap;
+	public ServerConfiguration getConfiguration() {
+		return configuration;
 	}
 
-	public void setBootstrap(ServerBootstrap bootstrap) {
-		this.bootstrap = bootstrap;
+	public void setConfiguration(ServerConfiguration configuration) {
+		this.configuration = configuration;
 	}
 }
