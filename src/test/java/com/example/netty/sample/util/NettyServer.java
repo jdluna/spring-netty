@@ -22,6 +22,7 @@ public class NettyServer {
 
 	public synchronized void start() {
         channel = bootstrap.bind(host, port).syncUninterruptibly().channel();
+        logger.debug("Netty server start at {}:{}", host, port);
 	}
 	
 	public synchronized void stop() {
@@ -31,7 +32,7 @@ public class NettyServer {
 			channel.close().await(10, TimeUnit.SECONDS);
 			
 		} catch (InterruptedException e) {
-			 logger.error("Error while stopping the server", e);
+			 logger.error("Error while stopping netty server", e);
 		}
 	}
 	
