@@ -23,6 +23,8 @@ public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter imple
 
 	private static Logger logger = LoggerFactory.getLogger(MessageHandlerDispatcher.class);
 	
+	private String groupName;
+	
 	private ApplicationContext applicationContext;
 	
 	private Map<String, MessageHandler<?>> handlerMap = new HashMap<>();
@@ -42,15 +44,23 @@ public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter imple
 				continue;
 			}
 			
-			String routeName = routeMapping.value();
+			String routeName = routeMapping.name();
 			if (routeName == null || routeName.equals("")) {
-				logger.debug("Invalid route name -> {}", handlerName);
+				logger.debug("Invalid route name -> {}", routeName);
 				continue;
 			}
 			
-			handlerMap.put(routeName, handler);
+			String groupName = routeMapping.group();
+			if (groupName == null || groupName.equals("")) {
+				logger.debug("Invalid group name -> {}", groupName);
+				continue;
+			}
 			
-			logger.debug("Register route {} to {}", routeName, handlerName);
+			if (groupName.equals(this.groupName)) {
+				handlerMap.put(routeName, handler);
+				
+				logger.debug("Register route {} to {}", routeName, handlerName);
+			}
 		}
 	}
 
@@ -79,12 +89,16 @@ public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter imple
 				}
 				
 				if (supportClass != null) {
-					logger.debug("Route message {} to handler {}", msg.toString(), handler);
+					logger.debug("Route message {} to handler {}", msg.toString(), handler.getClass().getSimpleName());
 					
-					try {
+					if (handler instanceof MessageHandler) {
+						try {
+							handler.handle(ctx, msg);
+						} finally {
+							ReferenceCountUtil.release(msg);
+						}
+					} else {
 						handler.handle(ctx, msg);
-					} finally {
-						ReferenceCountUtil.release(msg);
 					}
 				}
 			}
@@ -96,5 +110,13 @@ public class MessageHandlerDispatcher extends ChannelInboundHandlerAdapter imple
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 		this.applicationContext = applicationContext;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

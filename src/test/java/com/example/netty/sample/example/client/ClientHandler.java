@@ -1,4 +1,4 @@
-package com.example.netty.sample.example;
+package com.example.netty.sample.example.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,15 +11,13 @@ import com.solab.iso8583.IsoMessage;
 import io.netty.channel.ChannelHandlerContext;
 
 @Component
-@RouteMapping(name = "0200_01", group = "server")
-public class SimpleHandler implements MessageHandler<IsoMessage> {
+@RouteMapping(name = "0200_01", group = "client")
+public class ClientHandler implements MessageHandler<IsoMessage> {
 
-	private final static Logger logger = LoggerFactory.getLogger(SimpleHandler.class);
+	private final static Logger logger = LoggerFactory.getLogger(ClientHandler.class);
 	
 	@Override
 	public void handle(ChannelHandlerContext ctx, IsoMessage message) {
-		logger.debug("Simple Handler get message -> {}", message);
-		
-		ctx.writeAndFlush(message);
+		logger.debug("Client handler get message -> {}", message);
 	}
 }

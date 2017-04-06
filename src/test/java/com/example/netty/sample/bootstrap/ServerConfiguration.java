@@ -20,6 +20,7 @@ public class ServerConfiguration {
 
 	private Map<ChannelOption, Object> channelOptions = new LinkedHashMap<ChannelOption, Object>();
 
+	private ChannelHandler bossHandler;
 	private ChannelHandler workerHandler;
 
 	public ServerConfiguration channel(Class<? extends ServerSocketChannel> channel) {
@@ -42,6 +43,11 @@ public class ServerConfiguration {
 		return this;
 	}
 
+	public ServerConfiguration bossHandler(ChannelHandler bossHandler) {
+		this.bossHandler = bossHandler;
+		return this;
+	}
+	
 	public ServerConfiguration workerHandler(ChannelHandler workerHandler) {
 		this.workerHandler = workerHandler;
 		return this;
@@ -50,6 +56,11 @@ public class ServerConfiguration {
 	public ServerBootstrap build() {
 		ServerBootstrap bootstrap = new ServerBootstrap();
 		bootstrap.channel(channel);
+		
+		if (bossHandler != null) {
+			bootstrap.handler(bossHandler);
+		}
+		
 		bootstrap.childHandler(workerHandler);
 
 		Set<ChannelOption> keySet = channelOptions.keySet();

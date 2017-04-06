@@ -1,5 +1,7 @@
 package com.example.netty.sample;
 
+import java.util.concurrent.ExecutionException;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -13,7 +15,7 @@ import com.solab.iso8583.IsoValue;
 public class ClientBootstrap {
 	
 	@SuppressWarnings("resource")
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		
 		NettyClient nettyClient = appContext.getBean(NettyClient.class);
@@ -26,13 +28,11 @@ public class ClientBootstrap {
 		for (int i = 0; i < msgNum; i++) {
 			IsoMessage message = msgFacotry.newMessage(0x200);
 			
-			IsoValue<String> processingCode = new IsoValue<String>(IsoType.ALPHA, "300000", 6);
+			IsoValue<String> processingCode = new IsoValue<String>(IsoType.ALPHA, "010000", 6);
 			message.setField(3, processingCode);
 			
-			nettyClient.send(message).sync();
+			nettyClient.send(message).get();
 		}
-		
-		Thread.sleep(5000);
 		
 		nettyClient.stop();
 	}

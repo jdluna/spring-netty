@@ -82,7 +82,9 @@ public class NettyConfig {
 	
 	@Bean
 	public MessageHandlerDispatcher serverDispatcher() {
-		return new MessageHandlerDispatcher();
+		MessageHandlerDispatcher dispatcher = new MessageHandlerDispatcher();
+		dispatcher.setGroupName("server");
+		return dispatcher;
 	}
 	
 	@Bean
@@ -122,6 +124,13 @@ public class NettyConfig {
 	// Client
 	
 	@Bean
+	public MessageHandlerDispatcher clientDispatcher() {
+		MessageHandlerDispatcher dispatcher = new MessageHandlerDispatcher();
+		dispatcher.setGroupName("client");
+		return dispatcher;
+	}
+	
+	@Bean
 	@Scope(scopeName = "prototype")
 	public ClientConfiguration clientConfiguration() {
 		return new ClientConfiguration()
@@ -136,11 +145,14 @@ public class NettyConfig {
 				protected void initChannel(Channel ch) throws Exception {
 					ch.pipeline()
 					  .addFirst(loggingHandler())
+					  
 					  .addLast(lengthFieldEncoder())
 					  .addLast(lengthFieldDecoder())
 						
 					  .addLast(iso8583Encoder())
-					  .addLast(iso8583Decoder());
+					  .addLast(iso8583Decoder())
+
+					  .addLast(clientDispatcher());
 				}
 			});
 	}
