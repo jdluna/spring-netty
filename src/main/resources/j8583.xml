@@ -3,7 +3,7 @@
 <j8583-config>
 
 	<template type="0200">
-		<field num="3" type="NUMERIC" length="6">650000</field>
+		<field num="3" type="ALPHA" length="6">650000</field>
 		<field num="7" type="DATE10" />
 		<field num="32" type="LLVAR">456</field>
 		<field num="35" type="LLVAR">4591700012340000</field>
@@ -31,7 +31,7 @@
 	</template>
 
 	<parse type="0200">
-		<field num="3" type="NUMERIC" length="6" />
+		<field num="3" type="ALPHA" length="6" />
 		<field num="7" type="DATE10" />
 		<field num="32" type="LLVAR" />
 		<field num="35" type="LLVAR" />

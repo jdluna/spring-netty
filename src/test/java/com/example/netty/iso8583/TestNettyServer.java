@@ -7,8 +7,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import com.example.netty.AbstractTestCase;
 import com.example.netty.base.iso8583.MessageFactory;
+import com.example.netty.sample.test.AbstractTestCase;
 import com.example.netty.util.FutureAggregator;
 import com.example.netty.util.NettyClient;
 import com.example.netty.util.NettyServer;

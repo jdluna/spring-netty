@@ -10,7 +10,7 @@ import io.netty.channel.Channel;
 
 public class NettyServer {
 	
-	final static Logger logger = LoggerFactory.getLogger(NettyServer.class);
+	private final static Logger logger = LoggerFactory.getLogger(NettyServer.class);
 	
 	private String host;
 	

@@ -11,7 +11,7 @@ import io.netty.channel.ChannelFuture;
 
 public class NettyClient {
 	
-	final static Logger logger = LoggerFactory.getLogger(NettyClient.class);
+	private final static Logger logger = LoggerFactory.getLogger(NettyClient.class);
 	
 	private String host;
 	

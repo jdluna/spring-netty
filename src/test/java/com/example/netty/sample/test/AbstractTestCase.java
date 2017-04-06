@@ -1,4 +1,4 @@
-package com.example.netty;
+package com.example.netty.sample.test;
 
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

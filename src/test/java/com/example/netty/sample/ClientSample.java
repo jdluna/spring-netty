@@ -1,0 +1,37 @@
+package com.example.netty.sample;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.example.netty.sample.conf.AppConfig;
+import com.example.netty.sample.iso8583.MessageFactory;
+import com.example.netty.sample.util.NettyClient;
+import com.solab.iso8583.IsoMessage;
+import com.solab.iso8583.IsoType;
+import com.solab.iso8583.IsoValue;
+
+public class ClientSample {
+	
+	@SuppressWarnings("resource")
+	public static void main(String[] args) throws InterruptedException {
+		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
+		
+		NettyClient nettyClient = appContext.getBean(NettyClient.class);
+		nettyClient.start();
+		
+		MessageFactory msgFacotry = appContext.getBean(MessageFactory.class);
+		
+		int msgNum = 1;
+		
+		for (int i = 0; i < msgNum; i++) {
+			IsoMessage message = msgFacotry.newMessage(0x200);
+			
+			IsoValue<String> processingCode = new IsoValue<String>(IsoType.ALPHA, "010000", 6);
+			message.setField(3, processingCode);
+			
+			nettyClient.send(message);
+		}
+		
+//		nettyClient.stop();
+	}
+}

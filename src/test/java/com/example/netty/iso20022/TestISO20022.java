@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import com.example.netty.AbstractTestCase;
+import com.example.netty.sample.test.AbstractTestCase;
 
 public class TestISO20022 extends AbstractTestCase {
 
