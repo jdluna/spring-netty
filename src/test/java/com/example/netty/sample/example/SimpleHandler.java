@@ -1,6 +1,7 @@
 package com.example.netty.sample.example;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.ReferenceCountUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,5 +20,7 @@ public class SimpleHandler implements MessageHandler<IsoMessage> {
 	@Override
 	public void handle(ChannelHandlerContext ctx, IsoMessage message) {
 		logger.debug("Simple Handler get message -> {}", message);
+		
+		ReferenceCountUtil.release(message);
 	}
 }
