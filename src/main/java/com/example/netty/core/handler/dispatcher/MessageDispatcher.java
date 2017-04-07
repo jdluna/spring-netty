@@ -76,7 +76,7 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 			if (dispatcher.equals(name)) {
 				handlerMap.put(routeName, (MessageHandler) handler);
 				
-				logger.debug("Register {} to {}", handler.getClass().getSimpleName(), name);
+				logger.debug("Register {} to dispatcher {}", handler.getClass().getSimpleName(), name);
 			}
 				
 		}
