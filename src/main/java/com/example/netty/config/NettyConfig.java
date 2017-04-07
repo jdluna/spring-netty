@@ -1,7 +1,11 @@
 package com.example.netty.config;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +25,7 @@ import com.example.netty.core.endpoint.TcpServer;
 import com.example.netty.core.handler.MessageDispatcher;
 import com.example.netty.core.handler.RouteExtractor;
 import com.example.netty.core.j8583.MessageFactory;
+import com.example.netty.core.util.SSLContextBuilder;
 import com.example.netty.handler.IsoMessageRouteExractor;
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.parse.ConfigParser;
@@ -35,6 +40,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.ssl.SslHandler;
 
 @Configuration
 public class NettyConfig {
@@ -90,6 +96,24 @@ public class NettyConfig {
 		return new IsoMessageRouteExractor();
 	}
 	
+	// Server
+	
+	public SslHandler serverSSLHandler() throws GeneralSecurityException, IOException {
+		SSLContext sslContext = new SSLContextBuilder()
+			.keyStore(env.getProperty("server.keystore.path"))
+			.keyStorePassword(env.getProperty("server.keystore.password"))
+			.trustStore(env.getProperty("server.truststore.path"))
+			.trustStorePassword(env.getProperty("server.truststore.password"))
+			.build();
+		
+		SSLEngine sslEngine = sslContext.createSSLEngine();
+		sslEngine.setUseClientMode(false);
+		sslEngine.setNeedClientAuth(true);
+		
+		SslHandler handler = new SslHandler(sslEngine);
+		return handler;
+	}
+	
 	@Bean
 	public MessageDispatcher serverDispatcher() {
 		MessageDispatcher dispatcher = new MessageDispatcher(Constant.DISPATCHER_SERVER);
@@ -110,7 +134,10 @@ public class NettyConfig {
 				@Override
 				protected void initChannel(Channel ch) throws Exception {
 					ch.pipeline()
-					  .addFirst(loggingHandler())
+					  .addFirst(serverSSLHandler())
+					  
+					  .addLast(loggingHandler())
+					  
 					  .addLast(lengthFieldEncoder())
 					  .addLast(lengthFieldDecoder())
 						
@@ -133,6 +160,21 @@ public class NettyConfig {
 	
 	// Client
 	
+	public SslHandler clientSSLHandler() throws GeneralSecurityException, IOException {
+		SSLContext sslContext = new SSLContextBuilder()
+			.keyStore(env.getProperty("client.keystore.path"))
+			.keyStorePassword(env.getProperty("client.keystore.password"))
+			.trustStore(env.getProperty("client.truststore.path"))
+			.trustStorePassword(env.getProperty("client.truststore.password"))
+			.build();
+		
+		SSLEngine sslEngine = sslContext.createSSLEngine();
+		sslEngine.setUseClientMode(true);
+		
+		SslHandler handler = new SslHandler(sslEngine);
+		return handler;
+	}
+	
 	@Bean
 	public MessageDispatcher clientDispatcher() {
 		MessageDispatcher dispatcher = new MessageDispatcher(Constant.DISPATCHER_CLIENT);
@@ -153,7 +195,9 @@ public class NettyConfig {
 				@Override
 				protected void initChannel(Channel ch) throws Exception {
 					ch.pipeline()
-					  .addFirst(loggingHandler())
+					  .addFirst(clientSSLHandler())
+					 
+					  .addLast(loggingHandler())
 					  
 					  .addLast(lengthFieldEncoder())
 					  .addLast(lengthFieldDecoder())
