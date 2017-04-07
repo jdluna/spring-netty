@@ -14,8 +14,8 @@ import com.example.netty.core.codec.IsoMessageDecoder;
 import com.example.netty.core.codec.IsoMessageEncoder;
 import com.example.netty.core.configuration.ClientConfiguration;
 import com.example.netty.core.configuration.ServerConfiguration;
-import com.example.netty.core.endpoint.NettyClient;
-import com.example.netty.core.endpoint.NettyServer;
+import com.example.netty.core.endpoint.Client;
+import com.example.netty.core.endpoint.Server;
 import com.example.netty.core.handler.dispatcher.MessageHandlerDispatcher;
 import com.example.netty.core.j8583.MessageFactory;
 import com.solab.iso8583.parse.ConfigParser;
@@ -113,8 +113,8 @@ public class NettyConfig {
 	}
 	
 	@Bean
-	public NettyServer nettyServer() {
-		NettyServer server = new NettyServer();
+	public Server server() {
+		Server server = new Server();
 		server.setHost(env.getProperty("server.host"));
 		server.setPort(env.getProperty("server.port", Integer.class));
 		server.setConfiguration(serverConfiguration());
@@ -159,11 +159,11 @@ public class NettyConfig {
 	
 	@Bean(destroyMethod = "stop")
 	@Scope(scopeName = "prototype")
-	public NettyClient nettyClient() {
-		NettyClient nettyClient = new NettyClient();
-		nettyClient.setHost(env.getProperty("server.host"));
-		nettyClient.setPort(env.getProperty("server.port", Integer.class));
-		nettyClient.setConfiguration(clientConfiguration());
-		return nettyClient;
+	public Client client() {
+		Client client = new Client();
+		client.setHost(env.getProperty("server.host"));
+		client.setPort(env.getProperty("server.port", Integer.class));
+		client.setConfiguration(clientConfiguration());
+		return client;
 	}
 }

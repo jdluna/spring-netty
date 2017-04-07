@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import com.example.netty.core.endpoint.NettyClient;
-import com.example.netty.core.endpoint.NettyServer;
+import com.example.netty.core.endpoint.Client;
+import com.example.netty.core.endpoint.Server;
 import com.example.netty.core.j8583.MessageFactory;
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.IsoType;
@@ -15,7 +15,7 @@ import com.solab.iso8583.IsoValue;
 public class TestNettyServer extends AbstractTestCase {
 	
 	@Autowired
-	private NettyServer nettyServer;
+	private Server server;
 	
 	@Autowired
 	private MessageFactory messageFactory;
@@ -25,12 +25,12 @@ public class TestNettyServer extends AbstractTestCase {
 	
 	@Before
 	public void before() {
-		nettyServer.start();
+		server.start();
 	}
 	
 	@Test
 	public void testOneMessage() throws InterruptedException {
-		NettyClient client = appContext.getBean(NettyClient.class);
+		Client client = appContext.getBean(Client.class);
 		client.start();
 		
 		IsoMessage message = messageFactory.newMessage(0x200);

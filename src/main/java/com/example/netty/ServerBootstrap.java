@@ -4,7 +4,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.example.netty.config.AppConfig;
-import com.example.netty.core.endpoint.NettyServer;
+import com.example.netty.core.endpoint.Server;
 
 
 public class ServerBootstrap {
@@ -13,7 +13,7 @@ public class ServerBootstrap {
 	public static void main(String[] args) throws InterruptedException {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		
-		NettyServer nettyServer = appContext.getBean(NettyServer.class);
-		nettyServer.start();
+		Server server = appContext.getBean(Server.class);
+		server.start();
 	}
 }

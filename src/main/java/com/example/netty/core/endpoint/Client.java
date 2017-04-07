@@ -5,33 +5,31 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.example.netty.core.configuration.ServerConfiguration;
+import com.example.netty.core.configuration.ClientConfiguration;
 
-import io.netty.bootstrap.ServerBootstrap;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 
-public class NettyServer {
+public class Client {
 	
-	private final static Logger logger = LoggerFactory.getLogger(NettyServer.class);
+	private final static Logger logger = LoggerFactory.getLogger(Client.class);
 	
 	private String host;
 	
 	private int port;
 	
-	private ServerConfiguration configuration;
-	
-	private ServerBootstrap bootstrap;
+	private ClientConfiguration configuration;
+
+	private Bootstrap bootstrap;
 	
 	private Channel channel;
-
+	
 	public synchronized void start() {
 		try {
 			bootstrap = configuration.build();
-			
-			this.channel = bootstrap.bind(host, port).sync().channel();
-			
-			logger.debug("Netty server started at {}:{}", host, port);
-			
+			this.channel = bootstrap.connect(host, port).sync().channel();
+		
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -43,13 +41,16 @@ public class NettyServer {
 			channel.close().sync().await(10, TimeUnit.SECONDS);
 			
 			bootstrap.group().shutdownGracefully();
-			bootstrap.childGroup().shutdownGracefully();
 			
-			logger.debug("Netty server stopped at {}:{}", host, port);
+			logger.debug("Netty client stopped");
 			
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage(), e);
 		}
+	}
+	
+	public ChannelFuture send(Object object) {
+		return channel.writeAndFlush(object);
 	}
 	
 	public String getHost() {
@@ -68,11 +69,11 @@ public class NettyServer {
 		this.port = port;
 	}
 
-	public ServerConfiguration getConfiguration() {
+	public ClientConfiguration getConfiguration() {
 		return configuration;
 	}
 
-	public void setConfiguration(ServerConfiguration configuration) {
+	public void setConfiguration(ClientConfiguration configuration) {
 		this.configuration = configuration;
 	}
 }
