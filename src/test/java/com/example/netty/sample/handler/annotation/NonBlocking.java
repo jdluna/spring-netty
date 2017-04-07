@@ -1,4 +1,4 @@
-package com.example.netty.sample.handler;
+package com.example.netty.sample.handler.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface NonBlock {
+public @interface NonBlocking {
 
 }

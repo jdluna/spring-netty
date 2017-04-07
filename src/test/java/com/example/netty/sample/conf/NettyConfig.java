@@ -21,10 +21,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
-import com.example.netty.sample.bootstrap.ClientConfiguration;
-import com.example.netty.sample.bootstrap.ServerConfiguration;
 import com.example.netty.sample.codec.ISO8583Decoder;
 import com.example.netty.sample.codec.ISO8583Encoder;
+import com.example.netty.sample.configuration.ClientConfiguration;
+import com.example.netty.sample.configuration.ServerConfiguration;
 import com.example.netty.sample.handler.MessageHandlerDispatcher;
 import com.example.netty.sample.iso8583.MessageFactory;
 import com.example.netty.sample.util.NettyClient;

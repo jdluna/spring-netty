@@ -1,4 +1,4 @@
-package com.example.netty.sample.handler;
+package com.example.netty.sample.handler.annotation;
 
 public interface Routable {
 

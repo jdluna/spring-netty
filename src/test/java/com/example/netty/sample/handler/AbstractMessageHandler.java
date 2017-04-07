@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
+import com.example.netty.sample.handler.annotation.NonBlocking;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.ReferenceCountUtil;
 
@@ -28,7 +30,7 @@ public abstract class AbstractMessageHandler<IN> implements MessageHandler<IN> {
 		logger.debug("Invoke method handle()");
 		
         final Method method = BeanUtils.findMethod(this.getClass(), "handle", clazz);
-        NonBlock asynAnnotation = method.getAnnotation(NonBlock.class);
+        NonBlocking asynAnnotation = method.getAnnotation(NonBlocking.class);
         
         if (asynAnnotation == null) {
         	try {

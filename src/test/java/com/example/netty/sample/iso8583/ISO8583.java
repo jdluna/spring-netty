@@ -1,6 +1,6 @@
 package com.example.netty.sample.iso8583;
 
-import com.example.netty.sample.handler.Routable;
+import com.example.netty.sample.handler.annotation.Routable;
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.IsoValue;
 

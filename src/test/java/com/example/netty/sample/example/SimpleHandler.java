@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.example.netty.sample.handler.MessageHandler;
-import com.example.netty.sample.handler.RouteMapping;
+import com.example.netty.sample.handler.annotation.RouteMapping;
 import com.solab.iso8583.IsoMessage;
 
 import io.netty.channel.ChannelHandlerContext;
