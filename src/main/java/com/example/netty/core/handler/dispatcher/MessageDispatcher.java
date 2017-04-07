@@ -1,4 +1,4 @@
-package com.example.netty.core.handler;
+package com.example.netty.core.handler.dispatcher;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -16,6 +16,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
+
+import com.example.netty.core.handler.AbstractMessageHandler;
+import com.example.netty.core.handler.Handler;
+import com.example.netty.core.handler.MessageHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
