@@ -32,9 +32,7 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 	
 	private Map<String, MessageHandler> handlerMap = new HashMap<String, MessageHandler>();
 	
-	private List<RouteExtractor> routeExtractors = new ArrayList<RouteExtractor>();
-	
-	private Map<Class, String> routeExtractorSupportClasses = new HashMap<Class, String>();
+	private List<? extends RouteExtractor> routeExtractors = new ArrayList<RouteExtractor>();
 	
 	public MessageDispatcher(String name) {
 		this.name = name;
@@ -71,25 +69,12 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 				continue;
 			}
 			
-			handlerMap.put(routeName, (MessageHandler) handler);
+			if (dispatcher.equals(name)) {
+				handlerMap.put(routeName, (MessageHandler) handler);
 				
-			logger.debug("Register {} to {}", handler.getClass().getSimpleName(), name);
-		}
-		
-		for (RouteExtractor routeExtractor : routeExtractors) {
-			Class<?> supportClass = null;
-			
-			Type type = AopUtils.getTargetClass(routeExtractor).getGenericInterfaces()[0];
-			
-			if (type instanceof ParameterizedType) {
-				ParameterizedType parameterizedType = (ParameterizedType) type;
-		        Type[] typeArguments = parameterizedType.getActualTypeArguments();
-		        supportClass = (Class<?>) typeArguments[0];
+				logger.debug("Register {} to {}", handler.getClass().getSimpleName(), name);
 			}
-			
-			if (supportClass != null) {
-				routeExtractorSupportClasses.put(supportClass, "");
-			}
+				
 		}
 	}
 
@@ -100,7 +85,16 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 		
 		for (RouteExtractor routeExtractor : routeExtractors) {
 			
-			if (routeExtractorSupportClasses.get(msg.getClass()) == null) {
+			Type type = AopUtils.getTargetClass(routeExtractor).getGenericInterfaces()[0];
+			
+			Class supportClass = null;
+			if (type instanceof ParameterizedType) {
+				ParameterizedType parameterizedType = (ParameterizedType) type;
+		        Type[] typeArguments = parameterizedType.getActualTypeArguments();
+		        supportClass = (Class<?>) typeArguments[0];
+			}
+			
+			if (supportClass != null && !supportClass.isAssignableFrom(msg.getClass())) {
 				continue;
 			}
 			
@@ -134,11 +128,11 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 		this.applicationContext = applicationContext;
 	}
 
-	public List<RouteExtractor> getRouteMatchers() {
+	public List<? extends RouteExtractor> getRouteMatchers() {
 		return routeExtractors;
 	}
 
-	public void setRouteMatchers(List<RouteExtractor> routeExtractors) {
+	public void setRouteMatchers(List<? extends RouteExtractor> routeExtractors) {
 		this.routeExtractors = routeExtractors;
 	}
 }

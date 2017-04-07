@@ -7,7 +7,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-@ComponentScan("com.example.netty.sample")
+@ComponentScan("com.example.netty")
 @PropertySource("classpath:application.properties")
 public class AppConfig {
 	

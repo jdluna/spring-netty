@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.example.netty.config.AppConfig;
-import com.example.netty.core.endpoint.Client;
+import com.example.netty.core.endpoint.TcpClient;
 import com.example.netty.core.j8583.MessageFactory;
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.IsoType;
@@ -18,8 +18,8 @@ public class ClientBootstrap {
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		ApplicationContext appContext = new AnnotationConfigApplicationContext(AppConfig.class);
 		
-		Client client = appContext.getBean(Client.class);
-		client.start();
+		TcpClient tcpClient = appContext.getBean(TcpClient.class);
+		tcpClient.start();
 		
 		MessageFactory msgFacotry = appContext.getBean(MessageFactory.class);
 		
@@ -31,9 +31,7 @@ public class ClientBootstrap {
 			IsoValue<String> processingCode = new IsoValue<String>(IsoType.ALPHA, "010000", 6);
 			message.setField(3, processingCode);
 			
-			client.send(message).get();
+			tcpClient.send(message);
 		}
-		
-		client.stop();
 	}
 }

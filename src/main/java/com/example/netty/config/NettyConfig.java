@@ -1,6 +1,7 @@
 package com.example.netty.config;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,14 +11,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
+import com.example.netty.Constant;
 import com.example.netty.core.codec.IsoMessageDecoder;
 import com.example.netty.core.codec.IsoMessageEncoder;
 import com.example.netty.core.configuration.ClientConfiguration;
 import com.example.netty.core.configuration.ServerConfiguration;
-import com.example.netty.core.endpoint.Client;
-import com.example.netty.core.endpoint.Server;
+import com.example.netty.core.endpoint.TcpClient;
+import com.example.netty.core.endpoint.TcpServer;
 import com.example.netty.core.handler.MessageDispatcher;
+import com.example.netty.core.handler.RouteExtractor;
 import com.example.netty.core.j8583.MessageFactory;
+import com.example.netty.handler.IsoMessageRouteExractor;
+import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.parse.ConfigParser;
 
 import io.netty.buffer.PooledByteBufAllocator;
@@ -81,8 +86,14 @@ public class NettyConfig {
 	}
 	
 	@Bean
+	public RouteExtractor<IsoMessage> isoMessageRouteExtractor() {
+		return new IsoMessageRouteExractor();
+	}
+	
+	@Bean
 	public MessageDispatcher serverDispatcher() {
-		MessageDispatcher dispatcher = new MessageDispatcher("server");
+		MessageDispatcher dispatcher = new MessageDispatcher(Constant.DISPATCHER_SERVER);
+		dispatcher.setRouteMatchers(Arrays.asList(isoMessageRouteExtractor()));
 		return dispatcher;
 	}
 	
@@ -112,19 +123,20 @@ public class NettyConfig {
 	}
 	
 	@Bean
-	public Server server() {
-		Server server = new Server();
-		server.setHost(env.getProperty("server.host"));
-		server.setPort(env.getProperty("server.port", Integer.class));
-		server.setConfiguration(serverConfiguration());
-		return server;
+	public TcpServer tcpServer() {
+		TcpServer tcpServer = new TcpServer();
+		tcpServer.setHost(env.getProperty("server.host"));
+		tcpServer.setPort(env.getProperty("server.port", Integer.class));
+		tcpServer.setConfiguration(serverConfiguration());
+		return tcpServer;
 	}
 	
 	// Client
 	
 	@Bean
 	public MessageDispatcher clientDispatcher() {
-		MessageDispatcher dispatcher = new MessageDispatcher("client");
+		MessageDispatcher dispatcher = new MessageDispatcher(Constant.DISPATCHER_CLIENT);
+		dispatcher.setRouteMatchers(Arrays.asList(isoMessageRouteExtractor()));
 		return dispatcher;
 	}
 	
@@ -155,11 +167,11 @@ public class NettyConfig {
 	}
 	
 	@Bean(destroyMethod = "stop")
-	public Client client() {
-		Client client = new Client();
-		client.setHost(env.getProperty("server.host"));
-		client.setPort(env.getProperty("server.port", Integer.class));
-		client.setConfiguration(clientConfiguration());
-		return client;
+	public TcpClient tcpClient() {
+		TcpClient tcpClient = new TcpClient();
+		tcpClient.setHost(env.getProperty("server.host"));
+		tcpClient.setPort(env.getProperty("server.port", Integer.class));
+		tcpClient.setConfiguration(clientConfiguration());
+		return tcpClient;
 	}
 }
