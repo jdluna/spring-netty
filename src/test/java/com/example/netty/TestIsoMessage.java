@@ -1,4 +1,4 @@
-package com.example.netty.iso8583;
+package com.example.netty;
 
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
@@ -9,15 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.netty.base.iso8583.MessageFactory;
-import com.example.netty.sample.test.AbstractTestCase;
+import com.example.netty.core.j8583.MessageFactory;
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.IsoType;
 import com.solab.iso8583.IsoValue;
 
-public class TestISO8583 extends AbstractTestCase {
+public class TestIsoMessage extends AbstractTestCase {
 
-	final Logger logger = LoggerFactory.getLogger(TestISO8583.class);
+	final Logger logger = LoggerFactory.getLogger(TestIsoMessage.class);
 
 	@Autowired
 	MessageFactory messageFactory;
