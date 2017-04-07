@@ -36,5 +36,7 @@ public class TestNettyServer extends AbstractTestCase {
 		IsoMessage message = messageFactory.newMessage(0x200);
 		message.setField(32, new IsoValue<String>(IsoType.LLVAR, "Route1"));
 		message.setField(48, new IsoValue<String>(IsoType.LLLVAR, "FIELD_48_CUSTOM"));
+		
+		Thread.sleep(5000);
 	}
 }
