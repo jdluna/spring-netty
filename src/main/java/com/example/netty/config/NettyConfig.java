@@ -16,7 +16,7 @@ import com.example.netty.core.configuration.ClientConfiguration;
 import com.example.netty.core.configuration.ServerConfiguration;
 import com.example.netty.core.endpoint.Client;
 import com.example.netty.core.endpoint.Server;
-import com.example.netty.core.handler.dispatcher.MessageHandlerDispatcher;
+import com.example.netty.core.handler.MessageDispatcher;
 import com.example.netty.core.j8583.MessageFactory;
 import com.solab.iso8583.parse.ConfigParser;
 
@@ -81,9 +81,8 @@ public class NettyConfig {
 	}
 	
 	@Bean
-	public MessageHandlerDispatcher serverDispatcher() {
-		MessageHandlerDispatcher dispatcher = new MessageHandlerDispatcher();
-		dispatcher.setGroupName("server");
+	public MessageDispatcher serverDispatcher() {
+		MessageDispatcher dispatcher = new MessageDispatcher("server");
 		return dispatcher;
 	}
 	
@@ -124,14 +123,12 @@ public class NettyConfig {
 	// Client
 	
 	@Bean
-	public MessageHandlerDispatcher clientDispatcher() {
-		MessageHandlerDispatcher dispatcher = new MessageHandlerDispatcher();
-		dispatcher.setGroupName("client");
+	public MessageDispatcher clientDispatcher() {
+		MessageDispatcher dispatcher = new MessageDispatcher("client");
 		return dispatcher;
 	}
 	
 	@Bean
-	@Scope(scopeName = "prototype")
 	public ClientConfiguration clientConfiguration() {
 		return new ClientConfiguration()
 			.channel(NioSocketChannel.class)
@@ -158,7 +155,6 @@ public class NettyConfig {
 	}
 	
 	@Bean(destroyMethod = "stop")
-	@Scope(scopeName = "prototype")
 	public Client client() {
 		Client client = new Client();
 		client.setHost(env.getProperty("server.host"));
