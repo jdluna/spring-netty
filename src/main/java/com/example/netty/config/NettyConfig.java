@@ -2,7 +2,6 @@ package com.example.netty.config;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
@@ -14,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import com.example.netty.Constant;
 import com.example.netty.core.codec.IsoMessageDecoder;
@@ -22,8 +22,8 @@ import com.example.netty.core.configuration.ClientConfiguration;
 import com.example.netty.core.configuration.ServerConfiguration;
 import com.example.netty.core.endpoint.TcpClient;
 import com.example.netty.core.endpoint.TcpServer;
-import com.example.netty.core.handler.dispatcher.MessageDispatcher;
-import com.example.netty.core.handler.dispatcher.RouteExtractor;
+import com.example.netty.core.handler.MessageDispatcher;
+import com.example.netty.core.handler.RouteExtractor;
 import com.example.netty.core.j8583.MessageFactory;
 import com.example.netty.core.util.SSLContextBuilder;
 import com.example.netty.handler.IsoMessageRouteExractor;
@@ -50,19 +50,31 @@ public class NettyConfig {
 	@Autowired
 	private Environment env;
 	
+	
+	@Bean
+	public ThreadPoolExecutorFactoryBean threadPool() {
+		ThreadPoolExecutorFactoryBean factory = new ThreadPoolExecutorFactoryBean();
+		factory.setCorePoolSize(2);
+		factory.setMaxPoolSize(5);
+		factory.setAllowCoreThreadTimeOut(true);
+		
+		return factory;
+	}
+	
 	@Bean
 	public LoggingHandler loggingHandler() {
 		return new LoggingHandler(LogLevel.INFO);
 	}
 	
 	@Bean
-	public LengthFieldBasedFrameDecoder lengthFieldDecoder() {
-		return new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
+	public LengthFieldPrepender lengthFieldEncoder() {
+		return new LengthFieldPrepender(4);
 	}
 	
 	@Bean
-	public LengthFieldPrepender lengthFieldEncoder() {
-		return new LengthFieldPrepender(4);
+	@Scope(scopeName = "prototype")
+	public LengthFieldBasedFrameDecoder lengthFieldDecoder() {
+		return new LengthFieldBasedFrameDecoder(1048576, 0, 4, 0, 4);
 	}
 	
 	@Bean
@@ -116,8 +128,9 @@ public class NettyConfig {
 	
 	@Bean
 	public MessageDispatcher serverDispatcher() {
-		MessageDispatcher dispatcher = new MessageDispatcher(Constant.DISPATCHER_SERVER);
-		dispatcher.setRouteMatchers(Arrays.asList(isoMessageRouteExtractor()));
+		MessageDispatcher dispatcher = new MessageDispatcher();
+		dispatcher.setName(Constant.DISPATCHER_SERVER);
+		dispatcher.setRouteExtractors(isoMessageRouteExtractor());
 		return dispatcher;
 	}
 	
@@ -149,7 +162,7 @@ public class NettyConfig {
 			});
 	}
 	
-	@Bean
+	@Bean(destroyMethod = "stop")
 	public TcpServer tcpServer() {
 		TcpServer tcpServer = new TcpServer();
 		tcpServer.setHost(env.getProperty("server.host"));
@@ -177,8 +190,8 @@ public class NettyConfig {
 	
 	@Bean
 	public MessageDispatcher clientDispatcher() {
-		MessageDispatcher dispatcher = new MessageDispatcher(Constant.DISPATCHER_CLIENT);
-		dispatcher.setRouteMatchers(Arrays.asList(isoMessageRouteExtractor()));
+		MessageDispatcher dispatcher = new MessageDispatcher();
+		dispatcher.setRouteExtractors(isoMessageRouteExtractor());
 		return dispatcher;
 	}
 	

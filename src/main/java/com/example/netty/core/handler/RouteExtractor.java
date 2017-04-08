@@ -1,4 +1,4 @@
-package com.example.netty.core.handler.dispatcher;
+package com.example.netty.core.handler;
 
 public interface RouteExtractor<T> {
 

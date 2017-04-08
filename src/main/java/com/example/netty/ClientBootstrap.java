@@ -32,6 +32,18 @@ public class ClientBootstrap {
 			message.setField(3, processingCode);
 			
 			tcpClient.send(message);
+			
+			Thread.sleep(2000);
+			
+			tcpClient.send(message);
+			
+			Thread.sleep(2000);
+			
+			tcpClient.send(message);
+			
+			Thread.sleep(2000);
+			
+			tcpClient.send(message);
 		}
 	}
 }

@@ -15,5 +15,6 @@ public @interface Handler {
 	
 	boolean asyn() default false;
 	
-	String dispatcher() default "";
+	String dispatcher();
+	
 }
