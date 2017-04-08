@@ -55,20 +55,20 @@ public class ClientConfiguration {
 		boolean isNio = channel.isAssignableFrom(channel);
 
 		if (isNio) {
-			buildNioBootstrap(bootstrap);
+			buildNioConfiguration(bootstrap);
 		} else {
-			buildOioBootstrap(bootstrap);
+			buildOioConfiguration(bootstrap);
 		}
 
 		return bootstrap;
 	}
 
-	protected void buildNioBootstrap(Bootstrap bootstrap) {
+	protected void buildNioConfiguration(Bootstrap bootstrap) {
 		NioEventLoopGroup workerEventLoop = (workerThreadNum != null) ? new NioEventLoopGroup(workerThreadNum) : new NioEventLoopGroup();
 		bootstrap.group(workerEventLoop);
 	}
 
-	protected void buildOioBootstrap(Bootstrap bootstrap) {
+	protected void buildOioConfiguration(Bootstrap bootstrap) {
 		OioEventLoopGroup workerEventLoop = (workerThreadNum != null) ? new OioEventLoopGroup(workerThreadNum) : new OioEventLoopGroup();
 		bootstrap.group(workerEventLoop);
 	}

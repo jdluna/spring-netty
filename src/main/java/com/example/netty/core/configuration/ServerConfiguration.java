@@ -72,22 +72,22 @@ public class ServerConfiguration {
 		boolean isNio = channel.isAssignableFrom(channel);
 
 		if (isNio) {
-			buildNioBootstrap(bootstrap);
+			buildNioConfiguration(bootstrap);
 		} else {
-			buildOioBootstrap(bootstrap);
+			buildOioConfiguration(bootstrap);
 		}
 
 		return bootstrap;
 	}
 
-	protected void buildNioBootstrap(ServerBootstrap bootstrap) {
+	protected void buildNioConfiguration(ServerBootstrap bootstrap) {
 		NioEventLoopGroup bossEventLoop = (bossThreadNum != null) ? new NioEventLoopGroup(bossThreadNum) : new NioEventLoopGroup();
 		NioEventLoopGroup workerEventLoop = (workerThreadNum != null) ? new NioEventLoopGroup(workerThreadNum) : new NioEventLoopGroup();
 		
 		bootstrap.group(bossEventLoop, workerEventLoop);
 	}
 
-	protected void buildOioBootstrap(ServerBootstrap bootstrap) {
+	protected void buildOioConfiguration(ServerBootstrap bootstrap) {
 		OioEventLoopGroup bossEventLoop = (bossThreadNum != null) ? new OioEventLoopGroup(bossThreadNum) : new OioEventLoopGroup();
 		OioEventLoopGroup workerEventLoop = (workerThreadNum != null) ? new OioEventLoopGroup(workerThreadNum) : new OioEventLoopGroup();
 		

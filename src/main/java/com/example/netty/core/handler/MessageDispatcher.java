@@ -16,6 +16,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.Assert;
 
 import com.example.netty.core.util.ClassUtils;
 
@@ -43,7 +44,7 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		if (name == null || name.equals("")) {
-			throw new IllegalArgumentException("Dispatcher name must not be empty or null");
+			throw new IllegalArgumentException("Dispatcher name is empty");
 		}
 		
 		Map<String, Object> map = applicationContext.getBeansWithAnnotation(Handler.class);
@@ -59,19 +60,23 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 			
 			Handler annotation = AnnotationUtils.findAnnotation(handler.getClass(), Handler.class);
 			if (annotation == null) {
-				logger.debug("@Handler is undefined -> {}", beanName);
+				logger.warn("@Handler is undefined -> {}", beanName);
 				continue;
 			}
 			
 			String routeName = annotation.value();
 			if (routeName == null || routeName.equals("")) {
-				logger.debug("Invalid route name : {} -> {}", routeName, beanName);
+				logger.warn("Route name must not be empty -> {}", beanName);
+				continue;
+				
+			} else if (handlerMap.get(routeName) != null) {
+				logger.warn("Route name is duplicated : {} -> {}", routeName, beanName);
 				continue;
 			}
 			
 			String dispatcher = annotation.dispatcher();
 			if (dispatcher == null || dispatcher.equals("")) {
-				logger.debug("Invalid dispatcher name : {} -> {}", dispatcher, beanName);
+				logger.warn("Dispatcher name must not be empty -> {}", beanName);
 				continue;
 			}
 			
@@ -176,6 +181,7 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 	}
 
 	public void setRouteExtractors(RouteExtractor... routeExtractors) {
+		Assert.notEmpty(routeExtractors, "RouteExtractors must not be empty");
 		for (RouteExtractor extractor : routeExtractors) {
 			this.routeExtractors.add(extractor);
 		}
