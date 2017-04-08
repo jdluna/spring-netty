@@ -2,8 +2,8 @@
 
 #### 1. Example
 - TCP Client/Server + SSL/TLS (ISO8583)
-- ISO8583 Codec
-- Routing Handler
+- ISO8583 Codec + LengthFieldFrameEncoder/Decoder
+- Message Dispatcher
 
 #### 2. j8583
 
