@@ -23,7 +23,7 @@ public class ClientBootstrap {
 		
 		MessageFactory msgFacotry = appContext.getBean(MessageFactory.class);
 		
-		int msgNum = 1;
+		int msgNum = 3;
 		
 		for (int i = 0; i < msgNum; i++) {
 			IsoMessage message = msgFacotry.newMessage(0x200);
@@ -34,16 +34,6 @@ public class ClientBootstrap {
 			tcpClient.send(message);
 			
 			Thread.sleep(2000);
-			
-			tcpClient.send(message);
-			
-			Thread.sleep(2000);
-			
-			tcpClient.send(message);
-			
-			Thread.sleep(2000);
-			
-			tcpClient.send(message);
 		}
 	}
 }

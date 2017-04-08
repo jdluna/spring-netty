@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import com.example.netty.Constant;
 import com.example.netty.core.codec.IsoMessageDecoder;
@@ -49,17 +48,6 @@ public class NettyConfig {
 	
 	@Autowired
 	private Environment env;
-	
-	
-	@Bean
-	public ThreadPoolExecutorFactoryBean threadPool() {
-		ThreadPoolExecutorFactoryBean factory = new ThreadPoolExecutorFactoryBean();
-		factory.setCorePoolSize(2);
-		factory.setMaxPoolSize(5);
-		factory.setAllowCoreThreadTimeOut(true);
-		
-		return factory;
-	}
 	
 	@Bean
 	public LoggingHandler loggingHandler() {
@@ -191,6 +179,7 @@ public class NettyConfig {
 	@Bean
 	public MessageDispatcher clientDispatcher() {
 		MessageDispatcher dispatcher = new MessageDispatcher();
+		dispatcher.setName(Constant.DISPATCHER_CLIENT);
 		dispatcher.setRouteExtractors(isoMessageRouteExtractor());
 		return dispatcher;
 	}

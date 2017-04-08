@@ -79,7 +79,7 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 				MessageHandlerWrapper messageHandlerWrapper = new MessageHandlerWrapper();
 				messageHandlerWrapper.setAsyn(annotation.asyn());
 				messageHandlerWrapper.setHandler((MessageHandler) handler);
-				messageHandlerWrapper.setSupportClass(ClassUtils.getSuperClassGenericClass(handler.getClass(), 0));
+				messageHandlerWrapper.setSupportClass(ClassUtils.getInterfaceGenericType(handler.getClass(), 0));
 				
 				handlerMap.put(routeName, messageHandlerWrapper);
 				
@@ -96,7 +96,7 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 		
 		for (RouteExtractor routeExtractor : routeExtractors) {
 			
-			Class supportClass = ClassUtils.getSuperClassGenericClass(routeExtractor.getClass(), 0);
+			Class supportClass = ClassUtils.getInterfaceGenericType(routeExtractor.getClass(), 0);
 			if (supportClass != null && !supportClass.isAssignableFrom(request.getClass())) {
 				continue;
 			}
