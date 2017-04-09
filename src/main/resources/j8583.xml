@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE j8583-config PUBLIC "-//J8583//DTD CONFIG 1.0//EN" "j8583.dtd">
 <j8583-config>
-
 	<message type="0200" class="com.example.netty.vo.BalanceInquiryVO">
 		<field num="4" type="AMOUNT" attr="transactionAmount" />
 		<field num="7" type="DATE4" attr="transactionDate" />
 	</message>
-	
 </j8583-config>
