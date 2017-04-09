@@ -108,7 +108,7 @@ public class MessageFactory extends com.solab.iso8583.MessageFactory<IsoMessage>
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public IsoValue createIsoValue(FieldInfo fieldInfo, Iso8583 pojo) throws Exception {
+	protected IsoValue createIsoValue(FieldInfo fieldInfo, Iso8583 pojo) throws Exception {
 		IsoValue isoValue = null;
 		
 		try {
