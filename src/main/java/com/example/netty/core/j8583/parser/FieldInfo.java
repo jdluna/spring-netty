@@ -1,4 +1,4 @@
-package com.example.netty.core.j8583;
+package com.example.netty.core.j8583.parser;
 
 import com.solab.iso8583.IsoType;
 

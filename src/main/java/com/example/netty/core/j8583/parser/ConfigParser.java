@@ -1,6 +1,5 @@
-package com.example.netty.core.j8583;
+package com.example.netty.core.j8583.parser;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -12,8 +11,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -50,10 +47,6 @@ public class ConfigParser {
 	}
 	
 	protected static <T extends IsoMessage> void parse(MessageFactory<T> mfact, InputSource source) throws IOException {
-		parse(mfact, source, null);
-	}
-	
-	protected static <T extends IsoMessage> void parse(MessageFactory<T> mfact, InputSource source, final Resource DTD) throws IOException {
 		final DocumentBuilderFactory docfact = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docb = null;
 		Document doc = null;
@@ -62,15 +55,13 @@ public class ConfigParser {
 			docb.setEntityResolver(new EntityResolver() {
 				@Override
 				public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
-					if (DTD != null) {
-						return new InputSource(new FileReader(DTD.getFile()));
-					}
-					
-					Resource classpathDTD = new ClassPathResource("j8583.dtd");
-					if (classpathDTD.exists()) {
-						return new InputSource(new FileReader(classpathDTD.getFile()));
-					} else {
-						logger.warn("Cannot find j8583.dtd in classpath. j8583 config files will not be validated.");
+					if (systemId.contains("j8583.dtd")) {
+						URL dtd = getClass().getResource("j8583.dtd");
+						if (dtd == null) {
+							logger.warn("Cannot find j8583.dtd in classpath. j8583 config files will not be validated.");
+						} else {
+							return new InputSource(dtd.toString());
+						}
 					}
 					return null;
 				}
