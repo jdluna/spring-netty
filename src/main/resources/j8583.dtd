@@ -1,0 +1,13 @@
+<!ELEMENT j8583-config (message*) >
+
+<!ELEMENT message ( field* ) >
+<!ATTLIST message type NMTOKEN #REQUIRED >
+<!ATTLIST message extends NMTOKEN #IMPLIED >
+<!ATTLIST message class NMTOKEN #REQUIRED >
+
+<!ELEMENT field ( #PCDATA|field )* >
+<!ATTLIST field num NMTOKEN #REQUIRED >
+<!ATTLIST field length NMTOKEN #IMPLIED >
+<!ATTLIST field attr NMTOKEN #IMPLIED >
+<!ATTLIST field converter NMTOKEN #IMPLIED >
+<!ATTLIST field type ( ALPHA | NUMERIC | AMOUNT | DATE10 | DATE4 | DATE_EXP | TIME | LLVAR | LLLVAR | BINARY | LLBIN | LLLBIN | LLLLVAR | LLLLBIN | exclude) #REQUIRED >

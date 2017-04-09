@@ -1,61 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE j8583-config PUBLIC "-//J8583//DTD CONFIG 1.0//EN" "http://j8583.sourceforge.net/j8583.dtd">
+<!DOCTYPE j8583-config PUBLIC "-//J8583//DTD CONFIG 1.0//EN" "j8583.dtd">
 <j8583-config>
 
-	<template type="0200">
-		<field num="3" type="ALPHA" length="6">650000</field>
-		<field num="7" type="DATE10" />
-		<field num="32" type="LLVAR">456</field>
-		<field num="35" type="LLVAR">4591700012340000</field>
-		<field num="43" type="ALPHA" length="40">Fixed-width data</field>
-		<field num="48" type="LLLVAR">Life, the Universe, and Everything</field>
-		<field num="49" type="ALPHA" length="3">840</field>
-		<field num="60" type="LLLVAR">B456PRO1+000</field>
-		<field num="61" type="LLLVAR">This field can have a value up to 999 characters long.</field>
-		<field num="100" type="LLVAR">999</field>
-		<field num="102" type="LLVAR">ABCD</field>
-	</template>
-	
-	<template type="0300">
-		<field num="3" type="NUMERIC" length="6">650000</field>
-		<field num="7" type="DATE10" />
-		<field num="32" type="LLVAR">456</field>
-		<field num="35" type="LLVAR">4591700012340000</field>
-		<field num="43" type="ALPHA" length="40">Fixed-width data</field>
-		<field num="48" type="LLLVAR">Life, the Universe, and Everything</field>
-		<field num="49" type="ALPHA" length="3">840</field>
-		<field num="60" type="LLLVAR">B456PRO1+000</field>
-		<field num="61" type="LLLVAR">This field can have a value up to 999 characters long.</field>
-		<field num="100" type="LLVAR">999</field>
-		<field num="102" type="LLVAR">ABCD</field>
-	</template>
-
-	<parse type="0200">
-		<field num="3" type="ALPHA" length="6" />
-		<field num="7" type="DATE10" />
-		<field num="32" type="LLVAR" />
-		<field num="35" type="LLVAR" />
-		<field num="43" type="ALPHA" length="40" />
-		<field num="48" type="LLLVAR" />
-		<field num="49" type="ALPHA" length="3" />
-		<field num="60" type="LLLVAR" />
-		<field num="61" type="LLLVAR" />
-		<field num="100" type="LLVAR" />
-		<field num="102" type="LLVAR" />
-	</parse>
-	
-	<parse type="0300">
-		<field num="3" type="NUMERIC" length="6" />
-		<field num="7" type="DATE10" />
-		<field num="32" type="LLVAR" />
-		<field num="35" type="LLVAR" />
-		<field num="43" type="ALPHA" length="40" />
-		<field num="48" type="LLLVAR" />
-		<field num="49" type="ALPHA" length="3" />
-		<field num="60" type="LLLVAR" />
-		<field num="61" type="LLLVAR" />
-		<field num="100" type="LLVAR" />
-		<field num="102" type="LLVAR" />
-	</parse>
+	<message type="0200" class="com.example.netty.vo.BalanceInquiryVO">
+		<field num="4" type="AMOUNT" attr="transactionAmount" />
+		<field num="7" type="DATE4" attr="transactionDate" />
+	</message>
 	
 </j8583-config>

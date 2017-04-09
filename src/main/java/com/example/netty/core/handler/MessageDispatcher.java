@@ -64,6 +64,10 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 				continue;
 			}
 			
+			if (!annotation.dispatcher().equals(name)) {
+				continue;
+			}
+			
 			String routeName = annotation.value();
 			if (routeName == null || routeName.equals("")) {
 				logger.warn("Route name must not be empty -> {}", beanName);
@@ -80,17 +84,15 @@ public class MessageDispatcher extends ChannelInboundHandlerAdapter implements A
 				continue;
 			}
 			
-			if (dispatcher.equals(name)) {
-				MessageHandlerWrapper messageHandlerWrapper = new MessageHandlerWrapper();
-				messageHandlerWrapper.setAsyn(annotation.asyn());
-				messageHandlerWrapper.setHandler((MessageHandler) handler);
-				messageHandlerWrapper.setSupportClass(ClassUtils.getInterfaceGenericType(handler.getClass(), 0));
-				
-				handlerMap.put(routeName, messageHandlerWrapper);
-				
-				logger.debug("Register {} to dispatcher {}", beanName, name);
-			}
-				
+			
+			MessageHandlerWrapper messageHandlerWrapper = new MessageHandlerWrapper();
+			messageHandlerWrapper.setAsyn(annotation.asyn());
+			messageHandlerWrapper.setHandler((MessageHandler) handler);
+			messageHandlerWrapper.setSupportClass(ClassUtils.getInterfaceGenericType(handler.getClass(), 0));
+			
+			handlerMap.put(routeName, messageHandlerWrapper);
+			
+			logger.debug("Register {} to dispatcher {}", beanName, name);
 		}
 	}
 

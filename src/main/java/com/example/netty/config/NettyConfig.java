@@ -23,11 +23,11 @@ import com.example.netty.core.endpoint.TcpClient;
 import com.example.netty.core.endpoint.TcpServer;
 import com.example.netty.core.handler.MessageDispatcher;
 import com.example.netty.core.handler.RouteExtractor;
+import com.example.netty.core.j8583.ConfigParser;
 import com.example.netty.core.j8583.MessageFactory;
 import com.example.netty.core.util.SSLContextBuilder;
 import com.example.netty.handler.IsoMessageRouteExractor;
 import com.solab.iso8583.IsoMessage;
-import com.solab.iso8583.parse.ConfigParser;
 
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
