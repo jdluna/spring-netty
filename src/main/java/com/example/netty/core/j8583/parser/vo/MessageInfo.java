@@ -1,4 +1,4 @@
-package com.example.netty.core.j8583.parser;
+package com.example.netty.core.j8583.parser.vo;
 
 import java.util.HashMap;
 import java.util.Map;

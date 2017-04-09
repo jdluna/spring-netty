@@ -18,6 +18,8 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import com.example.netty.core.j8583.parser.vo.FieldInfo;
+import com.example.netty.core.j8583.parser.vo.MessageInfo;
 import com.solab.iso8583.CustomField;
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.IsoType;
