@@ -4,6 +4,7 @@
 - TCP Client/Server + SSL/TLS (ISO8583)
 - ISO8583 Codec + LengthFieldFrameEncoder/Decoder
 - Message Dispatcher
+- IsoMesage/Pojo Parser
 
 #### 2. j8583
 
