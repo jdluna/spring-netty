@@ -8,7 +8,6 @@ public class FieldInfo {
 	private IsoType type;
 	private String attr;
 	private Integer length;
-	private Class<?> converterClass;
 
 	public int getNum() {
 		return num;
@@ -42,17 +41,8 @@ public class FieldInfo {
 		this.length = length;
 	}
 
-	public Class<?> getConverterClass() {
-		return converterClass;
-	}
-
-	public void setConverterClass(Class<?> converterClass) {
-		this.converterClass = converterClass;
-	}
-
 	@Override
 	public String toString() {
-		return "FieldInfo [num=" + num + ", type=" + type + ", attr=" + attr + ", length=" + length
-				+ ", converterClass=" + converterClass + "]";
+		return "FieldInfo [num=" + num + ", type=" + type + ", attr=" + attr + ", length=" + length + "]";
 	}
 }

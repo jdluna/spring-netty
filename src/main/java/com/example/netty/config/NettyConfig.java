@@ -27,6 +27,7 @@ import com.example.netty.core.j8583.MessageFactory;
 import com.example.netty.core.j8583.parser.ConfigParser;
 import com.example.netty.core.util.SSLContextBuilder;
 import com.example.netty.handler.IsoMessageRouteExractor;
+import com.example.netty.parser.field.ConversionRateConverter;
 import com.solab.iso8583.IsoMessage;
 
 import io.netty.buffer.PooledByteBufAllocator;
@@ -80,6 +81,7 @@ public class NettyConfig {
 	public MessageFactory messageFactory() {
 		MessageFactory messageFactory = new MessageFactory();
 		messageFactory.setAssignDate(true);
+		messageFactory.setCustomField(10, new ConversionRateConverter());
 		
 		try {
 			ConfigParser.configureFromClasspathConfig(messageFactory, "j8583.xml");

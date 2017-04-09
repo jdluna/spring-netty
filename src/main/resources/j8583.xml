@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <j8583-config>
 	<message type="0200" class="com.example.netty.vo.BalanceInquiryVO">
-		<field num="4" type="AMOUNT" attr="transactionAmount" />
-		<field num="7" type="DATE4" attr="transactionDate" />
+		<field num="4" type="AMOUNT" attr="transactionAmount">0</field>
+		<field num="7" type="DATE4" attr="transactionDate"/>
+		<field num="10" type="NUMERIC" length="8" attr="conversionRate"/>
 	</message>
 </j8583-config>

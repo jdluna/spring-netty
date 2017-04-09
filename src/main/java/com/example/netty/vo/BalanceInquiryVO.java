@@ -9,6 +9,7 @@ public class BalanceInquiryVO implements Iso8583 {
 
 	private BigDecimal transactionAmount;
 	private Date transactionDate;
+	private Double conversionRate;
 
 	public BigDecimal getTransactionAmount() {
 		return transactionAmount;
@@ -26,9 +27,17 @@ public class BalanceInquiryVO implements Iso8583 {
 		this.transactionDate = transactionDate;
 	}
 
+	public Double getConversionRate() {
+		return conversionRate;
+	}
+
+	public void setConversionRate(Double conversionRate) {
+		this.conversionRate = conversionRate;
+	}
+
 	@Override
 	public String toString() {
 		return "BalanceInquiryVO [transactionAmount=" + transactionAmount + ", transactionDate=" + transactionDate
-				+ "]";
+				+ ", conversionRate=" + conversionRate + "]";
 	}
 }

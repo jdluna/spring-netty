@@ -131,19 +131,10 @@ public class ConfigParser {
                     String attr = f.getAttribute("attr");
                     IsoType type_ = IsoType.valueOf(f.getAttribute("type"));
                     
-                    Class<?> converterClass = null;
-                    try {
-                    	converterClass = Class.forName(elem.getAttribute("converter"));
-        			} catch (ClassNotFoundException e) {
-        				logger.error("Class is undefined -> {}", elem.getAttribute("converter"));
-        			}
-                    
                     FieldInfo fieldInfo = new FieldInfo();
                     fieldInfo.setNum(num);
                     fieldInfo.setType(type_);
-                    
                     fieldInfo.setAttr(attr);
-                    fieldInfo.setConverterClass(converterClass);
                     
                     if (type_ == IsoType.ALPHA || type_ == IsoType.NUMERIC) {
 	                    Integer length = Integer.parseInt(f.getAttribute("length"));

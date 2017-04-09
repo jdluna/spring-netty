@@ -22,7 +22,6 @@ import com.example.netty.core.j8583.parser.vo.MessageInfo;
 import com.solab.iso8583.CustomField;
 import com.solab.iso8583.IsoMessage;
 import com.solab.iso8583.IsoType;
-import com.solab.iso8583.IsoValue;
 
 public class MessageFactory extends com.solab.iso8583.MessageFactory<IsoMessage> {
 
@@ -39,7 +38,7 @@ public class MessageFactory extends com.solab.iso8583.MessageFactory<IsoMessage>
 		logger.debug("Register configuration {} to message factory", resource.getURL().getPath());
 	}
 
-	public void setConfigResources(List<? extends Resource> resources) throws IOException {
+	public void setConfigResources(List<Resource> resources) throws IOException {
 		Assert.notEmpty(resources, "Resources is empty");
 		for (Resource resource : resources) {
 			setConfigResource(resource);
@@ -94,7 +93,7 @@ public class MessageFactory extends com.solab.iso8583.MessageFactory<IsoMessage>
 						throw new Exception(String.format("Field %s not compatibale with %s -> %s", fieldName, isoType, pojo.getClass().getSimpleName()));
 					}
 					
-					IsoValue<Object> fieldValue = isoMessage.getAt(fieldInfo.getNum());
+					IsoValue<Object> fieldValue = (IsoValue<Object>) isoMessage.getAt(fieldInfo.getNum());
 					
 					BeanUtils.setProperty(pojo, fieldName, fieldValue.getValue());
 				}	
@@ -118,32 +117,24 @@ public class MessageFactory extends com.solab.iso8583.MessageFactory<IsoMessage>
 			Class<?> fieldClass = PropertyUtils.getPropertyType(pojo, fieldName);
 			
 			if (!validateFieldType(isoType, fieldClass)) {
-				throw new Exception(String.format("Field %s not compatibale with %s -> %s", fieldName, isoType, pojo.getClass().getSimpleName()));
+				throw new Exception(String.format("Field %s not compatible with %s -> %s", fieldName, isoType, pojo.getClass().getSimpleName()));
 			}
 			
 			Object fieldValue = PropertyUtils.getProperty(pojo, fieldName);
 				
-			Class<?> converterClass = fieldInfo.getConverterClass();
+			CustomField<?> converter = getCustomField(fieldInfo.getNum());
 			
 			if (isoType == IsoType.ALPHA || isoType == IsoType.NUMERIC) {
-				if (converterClass == null) {
+				if (converter == null) {
 					isoValue = new IsoValue(isoType, fieldValue, fieldInfo.getLength());
-					
 				} else {
-					Object converter = converterClass.newInstance();
-					if (converter instanceof CustomField) {
-						isoValue = new IsoValue(isoType, fieldValue, fieldInfo.getLength(), (CustomField) converter);
-					}
+					isoValue = new IsoValue(isoType, fieldValue, fieldInfo.getLength(), converter);
 				}
 			} else {
-				if (converterClass == null) {
+				if (converter == null) {
 					isoValue = new IsoValue(isoType, fieldValue);
-					
 				} else {
-					Object converter = converterClass.newInstance();
-					if (converter instanceof CustomField) {
-						isoValue = new IsoValue(isoType, fieldValue, (CustomField) converter);
-					}
+					isoValue = new IsoValue(isoType, fieldValue, converter);
 				}
 			}
 		} catch (Exception e) {
